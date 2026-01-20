@@ -1,4 +1,6 @@
 import express from 'express';
+import { MongoClient, ServerApiVersion } from 'mongodb';
+
 
 const articleInfo = [
     { name: 'testing_1', upvotes: 0, comments: [] },
@@ -9,6 +11,34 @@ const articleInfo = [
 const app = express();
 
 app.use(express.json());
+
+// Load article
+app.get('/api/articles/:name', async(req, res) =>{
+    const {name} = req.params;
+
+    // instance of mongo client
+    const uri = 'mongodb://127.0.0.1:27017';
+
+    const client = new MongoClient(uri, {
+        serverApi: {
+            version: ServerApiVersion.v1,
+            strict: true,
+            deprecationErrors: true,
+        }
+    });
+
+    await client.connect();
+
+    const db = client.db('full-stack-react-db');
+
+    const article = await db.collection('articles').findOne({ name })
+
+    if (article) {
+        res.json(article);
+    } else {
+        res.sendStatus(404);
+    }
+});
 
 // Hello GET for testing`
 app.get('/hello', function(req, res){
@@ -27,7 +57,7 @@ app.post('/api/articles/:name/upvote', (req, res)=>{
 
 // Comment on an article
 app.post('/api/articles/:name/comments', (req, res)=>{
-    // const name = req.params.name;
+    // const name = req.params.name; following line is the equivalent in destructured form 
     const {name} = req.params;
     const {postedBy, text } = req.body;
     const article = articleInfo.find(a => a.name === name);
@@ -37,6 +67,8 @@ app.post('/api/articles/:name/comments', (req, res)=>{
     });
     res.json(article);
 })
+
+
 
 
 // GET hello name
