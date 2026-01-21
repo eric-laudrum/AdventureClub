@@ -76,7 +76,6 @@ app.post('/api/articles/:name/comments', async(req, res)=>{
     res.json(updatedArticle);
 });
 
-
 async function start(){
     await connectToDB();
     // Start server message

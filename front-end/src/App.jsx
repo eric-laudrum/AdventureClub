@@ -11,12 +11,14 @@ import ArticlesListPage from './pages/ArticlesListPage';
 import ArticlePage from './pages/ArticlePage';
 import Layout from './Layout';
 import NotFoundPage from './pages/NotFoundPage';
+import axios from 'axios';
  
 
 const routes = [{
   path: '/',
   element: <Layout />,
   errorElement: <NotFoundPage/>,
+  
   children:[{
     path: '/',
     element: <HomePage />
@@ -28,7 +30,12 @@ const routes = [{
     element: <ArticlesListPage />
   },{
     path: '/articles/:name',
-    element: <ArticlePage />
+    element: <ArticlePage />,
+    loader: async function({params}){
+      const response = await axios.get('/api/articles/}' + params.name);
+      const {upvotes, comments } = response.data;
+      return {upvotes, comments };
+    } // Load data this component needs from the server
   }]
 }]
 
