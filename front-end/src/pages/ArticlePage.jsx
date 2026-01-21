@@ -36,8 +36,6 @@ export default function ArticlePage(){
     }
     return(
         <>
-        <h1> - - - - -  This is the artcile page - - - - - </h1>
-    
         <h1>{article.title}</h1>
         <button onClick={( onUpvoteClicked )}>Upvote</button>
         <p>This article has {upvotes} upvotes!</p>
