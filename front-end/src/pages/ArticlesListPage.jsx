@@ -4,7 +4,7 @@ import ArticlesList from '../ArticlesList';
 export default function ArticlesListPage(){
     return(
         <>
-        <h1>ArticlesListPage.jsx</h1>
+        <h2> - - - - - ArticlesListPage.jsx - - - - - </h2>
         <ArticlesList articles={articles} />
             
         </>

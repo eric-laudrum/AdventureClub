@@ -27,9 +27,10 @@ async function connectToDB(){
 
 // Load article
 app.get('/api/articles/:name', async(req, res) =>{
-    const {name} = req.params;
+    const { name } = req.params;
+    console.log("Load article with path /api/articles/:name");
 
-    const article = await db.collection('articles').findOne({ name })
+    const article = await db.collection('articles').findOne({ name });
 
     if (article) {
         res.json(article);

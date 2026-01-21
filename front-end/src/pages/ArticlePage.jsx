@@ -1,13 +1,17 @@
+import {useState } from 'react';
 import { useParams, useLoaderData } from 'react-router-dom';
 import axios from 'axios';
 import CommentsList from '../CommentsList';
 import articles from '../article-content';
-import {useState } from 'react';
+
+
+
 import AddCommentForm from '../AddCommentForm';
 
 export default function ArticlePage(){
     const { name } = useParams();
-    const { upvotes: intialUpvotes, comments: initialComments} = useLoaderData();
+    const { upvotes: initialUpvotes, comments: initialComments} = useLoaderData();
+    
     const[upvotes, setUpvotes] = useState(initialUpvotes);
     const [comments, setComments] = useState(initialComments)
 
@@ -28,13 +32,14 @@ export default function ArticlePage(){
             text: commentText,
         });
         const updatedArticleData = response.data;
-        setComments(updatedArtcileData.comments);
+        setComments(updatedArticleData.comments);
     }
     return(
         <>
-        <h1>This is the artcile page</h1>
-        <button onClick={onUpvoteClicked}>Upvote</button>
+        <h1> - - - - -  This is the artcile page - - - - - </h1>
+    
         <h1>{article.title}</h1>
+        <button onClick={( onUpvoteClicked )}>Upvote</button>
         <p>This article has {upvotes} upvotes!</p>
         {article.content.map(p => <p key={p}>{p}</p> )}
         <AddCommentForm onAddComment={onAddComment}/>
