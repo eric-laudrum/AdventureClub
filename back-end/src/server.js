@@ -1,6 +1,18 @@
 import express from 'express';
 import { MongoClient, ServerApiVersion } from 'mongodb';
-import { admin } from 'firebase-admin';
+import  admin  from 'firebase-admin';
+import fs from 'fs';
+
+
+const credentials = JSON.parse(
+    fs.readFileSync('./credentials.json')
+);
+
+
+admin.initializeApp({
+  credential: admin.credential.cert(credentials)
+});
+
 const app = express();
 
 app.use(express.json());
@@ -28,8 +40,7 @@ async function connectToDB(){
 // Load article
 app.get('/api/articles/:name', async(req, res) =>{
     const { name } = req.params;
-    console.log("Load article with path /api/articles/:name");
-
+    
     const article = await db.collection('articles').findOne({ name });
 
     if (article) {
@@ -38,6 +49,17 @@ app.get('/api/articles/:name', async(req, res) =>{
         res.sendStatus(404);
     }
 });
+
+// This applies to everything after
+app.use(async function(req, res, next){
+    const { authtoken } = req.headers;
+    if( authtoken ){
+        const user = await admin.auth().verifyIdToken( authtoken ); // return user if token is valid
+        req.user = user;
+    } else{ 
+        res.sendStatus(400); // response did not include all needed info
+    }
+})
 
 // Hello GET for testing`
 app.get('/hello', function(req, res){
