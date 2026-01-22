@@ -3,6 +3,8 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 // Custom hooks
 const useUser = () => {
+
+    console.log("useUser hook")
     const [ isLoading, setIsLoading ] = useState( true );
     const [ user, setUser ] = useState( null );
 
