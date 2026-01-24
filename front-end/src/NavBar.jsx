@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { getAuth, signOut} from 'firebase/auth';
 import useUser from "./use_user";
+import './App.css'
 
 export default function NavBar() {
     const { isLoading, user } = useUser();
@@ -10,8 +11,11 @@ export default function NavBar() {
 
     return(
         <nav className='nav_bar'>
+
             <ul className='nav_links'>
+
                 <li className='nav_link'>
+                
                     <Link to='/'>Home</Link>
                 </li>
                 <li className='nav_link'>
