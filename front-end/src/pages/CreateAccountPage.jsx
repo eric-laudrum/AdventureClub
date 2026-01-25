@@ -16,7 +16,18 @@ export default function CreateAccountPage(){
             return;
         }
         try{
-            await createUserWithEmailAndPassword(getAuth(), email, password);
+            const result = await createUserWithEmailAndPassword(getAuth(), email, password);
+            const firebaseUser = result.user;
+
+            await fetch('/api/register', {
+            method: 'POST',
+            body: JSON.stringify({ 
+                uid: firebaseUser.uid, 
+                email: firebaseUser.email 
+            }),
+            headers: { 'Content-Type': 'application/json' }
+        });
+
             navigate('/articles');
         } catch(e){
             setError(e.message);

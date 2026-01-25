@@ -1,17 +1,29 @@
 import { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
+import useUser from "../use_user";
+
+
 
 export default function  ProfilePage(){
-    const { id } = useParams();
+    
+    const { id: uid } = useParams();
+
+    const { user, isLoading: isAuthLoading } = useUser();
+
     const [ profile, setProfile ] = useState( null );
     const [ loading, setLoading ] = useState( true );
+
+    const isOwner = user && user.uid === uid;
 
     useEffect(() => {
         const fetchProfile = async () => {
             try{
-                const response = await fetch(`/api/profile/${id}`);
+                const response = await fetch(`/api/profile/${uid}`);
+                if( !response.ok ) throw new Error('User not found');
+
                 const data = await response.json();
                 setProfile( data );
+
             } catch( err ){
                 console.error("Failed to fetch profile: ", err);
             } finally{
@@ -19,9 +31,10 @@ export default function  ProfilePage(){
             }
         };
 
-        fetchProfile();
-    }, [id]);
+        if (uid) fetchProfile();
+    }, [uid]);
 
+    // Check loading states
     if( loading ) return <p>Loading...</p>;
     if( !profile ) return <p>User not found</p>;
 
@@ -29,7 +42,12 @@ export default function  ProfilePage(){
         <>
         <div className="profile_container">
             <h3>Profile</h3>
-            <p>Email: { profile.email }</p>
+            { isOwner && <button>Edit Profile</button> }
+            
+            <div className="profile_details">
+                <p>ID: { profile.uid }</p>
+                <p>Bio: { profile.bio || "No bio added" }</p>
+            </div>
         </div>
         </>
     );

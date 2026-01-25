@@ -16,8 +16,6 @@ import CreateAccountPage from './pages/CreateAccountPage';
 import Header from './Header'
 import ProfilePage from './pages/ProfilePage';
 
- 
-
 const routes = [{
   path: '/',
   element: <Layout />,

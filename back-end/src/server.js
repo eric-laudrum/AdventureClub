@@ -24,22 +24,20 @@ app.use(express.json());
 
 // Public API Routes -------------------------------------------------- 
 // Profile
-app.get('/api/profile/:id', async(req, res)=>{
-    try{
-        const { id } = req.params;
-        const user = await db.collection('users').findOne({ _id: new ObjectId(id) });
+app.get('/api/profile/:uid', async (req, res) => {
+    try {
+        const { uid } = req.params;
+        
+        const user = await db.collection('users').findOne({ uid: uid });
 
-        if( user ){
-            const { password, ...publicProfile } = user;
-            res.json( publicProfile );
-
+        if (user) {
+            res.json(user);
         } else {
-            res.status(404).json({ message: "Error: User not found: " });
+            res.status(404).json({ message: "User not found in database" });
         }
-    } catch(err){
-        res.status(500).json({ message: "Server Error: " + err });
+    } catch (err) {
+        res.status(500).json({ message: "Server error", error: err.message });
     }
-
 });
 
 // Load article
@@ -142,18 +140,7 @@ async function connectToDB(){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-const PORT = process.env.PORT || 8080; // Backup port 8080 if one cannot be found
+const PORT = process.env.PORT || 8080;
 async function start(){
 
     // Start server message
@@ -170,9 +157,7 @@ async function start(){
 
 app.use(express.static(path.join(__dirname, '../dist')))
 
-app.get('*', (req, res) =>{
-    res.sendFile(path.join(__dirname, '../dist/index.html'));
-})
+
 // Start server
 start();
 

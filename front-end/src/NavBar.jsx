@@ -27,7 +27,7 @@ export default function NavBar() {
                 { isLoading ? <li>Loading...</li> :(
                     <>
                     { user && (
-                    <Link to={`/profile/${user.id}`}>
+                    <Link to={`/profile/${user.uid}`}>
                         <li className='navLink'>
                             Logged in as { user.email }
                         </li>
