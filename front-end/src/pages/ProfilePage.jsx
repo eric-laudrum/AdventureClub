@@ -18,11 +18,18 @@ export default function  ProfilePage(){
     useEffect(() => {
         const fetchProfile = async () => {
             try{
-                const response = await fetch(`/api/profile/${uid}`);
+                const token = user && await user.getIdToken();
+                const response = await fetch(`/api/profile/${uid}`, {
+                    headers: {
+                        authtoken: token, 
+                    }
+                });
                 if( !response.ok ) throw new Error('User not found');
 
                 const data = await response.json();
                 setProfile( data );
+
+                
 
             } catch( err ){
                 console.error("Failed to fetch profile: ", err);
@@ -43,6 +50,8 @@ export default function  ProfilePage(){
         <div className="profile_container">
             <h3>Profile</h3>
             { isOwner && <button>Edit Profile</button> }
+
+            <p>Email: { profile.email || user?.email }</p>
             
             <div className="profile_details">
                 <p>ID: { profile.uid }</p>

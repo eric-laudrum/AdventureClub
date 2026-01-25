@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy:{
       '/api':{
-        target: 'https://tqzqkd94-8080.use.devtunnels.ms',
+        target: 'https://tqzqkd94-8000.use.devtunnels.ms',
         changeOrigin: true,
         secure: false,
       }

@@ -4,6 +4,7 @@ import  admin  from 'firebase-admin';
 import fs from 'fs';
 import path from 'path';
 import  { fileURLToPath }  from 'url';
+import cors from 'cors';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,8 +22,14 @@ admin.initializeApp({
 const app = express();
 app.use(express.json());
 
+app.use(cors({
+    origin: 'https://tqzqkd94-5173.use.devtunnels.ms',
+    credentials: true,
+}))
 
-// Public API Routes -------------------------------------------------- 
+
+// -------------------------------- Public API Routes ---------------------------- 
+
 // Profile
 app.get('/api/profile/:uid', async (req, res) => {
     try {
@@ -40,14 +47,45 @@ app.get('/api/profile/:uid', async (req, res) => {
     }
 });
 
-// Load article
+// Register user
+app.post('/api/register', async(req, res) =>{
+    console.log("Registration request received for UID: ", req.body.uid);
+    try{
+        const { uid, email } = req.body;
+        const existingUser = await db.collection('users').findOne({ uid });
+
+        if( !existingUser ){
+            const result = await db.collection('users').insertOne({
+                uid,
+                email,
+                upvotedArticles: [],
+                comments: [],
+
+            });
+            
+            console.log("User inserted into DB:", result.insertedId);
+            res.status(201).json({ message: "User registered successfully"})
+        } else{
+            console.log("User already exists with ID:", existingUser._id );
+            res.status(200).json({ message: "User already exists"});
+        }
+    } catch(err){
+        console.log("Registration error: ", err);
+        res.status(500).json({ message: 'Error registering user', error: err.message });
+    }
+});
+
+// Load Article
 app.get('/api/articles/:name', async(req, res) =>{
     const { name } = req.params;
     const article = await db.collection('articles').findOne({ name });
     article ? res.json(article) : res.sendStatus(404);
 });
 
-// Auth Middleware ----------------------------------------------------
+
+
+// ---------------------------- Auth Middleware ------------------------
+
 app.use(async function(req, res, next){
     const { authtoken } = req.headers;
     if( authtoken ){
@@ -60,12 +98,13 @@ app.use(async function(req, res, next){
         }
     
     } else{ 
-        res.sendStatus(400);
+        res.sendStatus(401);
     }
 });
 
-// Protected API Routes ------------------------------------------------ 
-// Upvote an article
+// ------------------------  Protected API Routes ------------------------
+
+// Upvote Article
 app.post('/api/articles/:name/upvote', async (req, res)=>{
     const{ name } = req.params;
     const { uid } = req.user;
@@ -90,7 +129,7 @@ app.post('/api/articles/:name/upvote', async (req, res)=>{
     }
 });
 
-// Comment on an article
+// Comment on Article
 app.post('/api/articles/:name/comments', async(req, res)=>{
     // const name = req.params.name; following line is the equivalent in destructured form 
     const {name} = req.params;
@@ -107,13 +146,12 @@ app.post('/api/articles/:name/comments', async(req, res)=>{
 });
 
 
-// Static Files & React Routing --------------------------------------------
+// ----------------------- Static Files & React Routing -------------------
 app.use(express.static(path.join(__dirname, '../dist')))
 
 app.get(/^(?!\/api).+/, (req, res) =>{
     res.sendFile(path.join(__dirname, '../dist/index.html'));
 })
-
 
 // Conenct to DB
 let db;
@@ -138,9 +176,7 @@ async function connectToDB(){
     db = client.db('full-stack-react-db');
 }
 
-
-
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8000;
 async function start(){
 
     // Start server message
@@ -156,7 +192,6 @@ async function start(){
 }
 
 app.use(express.static(path.join(__dirname, '../dist')))
-
 
 // Start server
 start();
