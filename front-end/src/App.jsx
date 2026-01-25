@@ -13,6 +13,8 @@ import Layout from './Layout';
 import NotFoundPage from './pages/NotFoundPage';
 import LoginPage from './pages/LoginPage';
 import CreateAccountPage from './pages/CreateAccountPage';
+import Header from './Header'
+import ProfilePage from './pages/ProfilePage';
 
  
 
@@ -24,6 +26,9 @@ const routes = [{
   children:[{
     path: '/',
     element: <HomePage />
+  },{
+    path: '/header',
+    element: <Header />
   },{
     path: '/about',
     element: <AboutPage />
@@ -40,6 +45,9 @@ const routes = [{
   }, {
     path: '/create-account',
     element: <CreateAccountPage />
+  }, {
+    path: '/profile/:id',
+    element: <ProfilePage />
   }]
 }]
 

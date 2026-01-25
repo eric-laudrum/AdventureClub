@@ -1,82 +1,72 @@
 import express from 'express';
-import { MongoClient, ServerApiVersion } from 'mongodb';
+import { MongoClient, ServerApiVersion, ObjectId } from 'mongodb';
 import  admin  from 'firebase-admin';
 import fs from 'fs';
 import path from 'path';
-
 import  { fileURLToPath }  from 'url';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
+// Credentials
 const credentials = JSON.parse(
     fs.readFileSync('./credentials.json')
 );
 
+// App Initialization
 admin.initializeApp({
   credential: admin.credential.cert(credentials)
 });
 
 const app = express();
-
 app.use(express.json());
 
-// Conenct to DB
-let db;
-async function connectToDB(){
-    // instance of mongo client
-    const uri = !process.env.MONGODB_USERNAME 
-        // Local connection
-        ? 'mongodb://127.0.0.1:27017' 
-        // Production / deployed
-        : `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.3ridrrt.mongodb.net/?appName=Cluster0`
 
-    const client = new MongoClient(uri, {
-        serverApi: {
-            version: ServerApiVersion.v1,
-            strict: true,
-            deprecationErrors: true,
+// Public API Routes -------------------------------------------------- 
+// Profile
+app.get('/api/profile/:id', async(req, res)=>{
+    try{
+        const { id } = req.params;
+        const user = await db.collection('users').findOne({ _id: new ObjectId(id) });
+
+        if( user ){
+            const { password, ...publicProfile } = user;
+            res.json( publicProfile );
+
+        } else {
+            res.status(404).json({ message: "Error: User not found: " });
         }
-    });
+    } catch(err){
+        res.status(500).json({ message: "Server Error: " + err });
+    }
 
-    await client.connect();
-
-    db = client.db('full-stack-react-db');
-}
-
-app.use(express.static(path.join(__dirname, '../dist')))
-
-app.get(/^(?!\/api).+/, (req, res) =>{
-    res.sendFile(path.join(__dirname, '../dist/index.html'));
-})
+});
 
 // Load article
 app.get('/api/articles/:name', async(req, res) =>{
     const { name } = req.params;
-    
     const article = await db.collection('articles').findOne({ name });
-
-    if (article) {
-        res.json(article);
-    } else {
-        res.sendStatus(404);
-    }
+    article ? res.json(article) : res.sendStatus(404);
 });
 
-// This applies to everything after
+// Auth Middleware ----------------------------------------------------
 app.use(async function(req, res, next){
     const { authtoken } = req.headers;
     if( authtoken ){
-        const user = await admin.auth().verifyIdToken( authtoken ); // return user if token is valid
-        req.user = user;
-        next(); // done with middleware callback - continue with route handler
+        try{
+            const user = await admin.auth().verifyIdToken( authtoken );
+            req.user = user;
+            next(); 
+        } catch ( err ){
+            res.status(401).json({ message: "Error: Invalid Token ", err })
+        }
+    
     } else{ 
-        res.sendStatus(400); // response did not include all needed info
+        res.sendStatus(400);
     }
 });
 
-
-
+// Protected API Routes ------------------------------------------------ 
 // Upvote an article
 app.post('/api/articles/:name/upvote', async (req, res)=>{
     const{ name } = req.params;
@@ -102,7 +92,6 @@ app.post('/api/articles/:name/upvote', async (req, res)=>{
     }
 });
 
-
 // Comment on an article
 app.post('/api/articles/:name/comments', async(req, res)=>{
     // const name = req.params.name; following line is the equivalent in destructured form 
@@ -120,6 +109,50 @@ app.post('/api/articles/:name/comments', async(req, res)=>{
 });
 
 
+// Static Files & React Routing --------------------------------------------
+app.use(express.static(path.join(__dirname, '../dist')))
+
+app.get(/^(?!\/api).+/, (req, res) =>{
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
+})
+
+
+// Conenct to DB
+let db;
+async function connectToDB(){
+    // instance of mongo client
+    const uri = !process.env.MONGODB_USERNAME 
+        // Local connection
+        ? 'mongodb://127.0.0.1:27017' 
+        // Production / deployed
+        : `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.3ridrrt.mongodb.net/?appName=Cluster0`
+
+    const client = new MongoClient(uri, {
+        serverApi: {
+            version: ServerApiVersion.v1,
+            strict: true,
+            deprecationErrors: true,
+        }
+    });
+
+    await client.connect();
+
+    db = client.db('full-stack-react-db');
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const PORT = process.env.PORT || 8080; // Backup port 8080 if one cannot be found
 async function start(){
 
@@ -134,6 +167,12 @@ async function start(){
         console.error("\nDatabase connection failed: ", err, "\n");
     }
 }
+
+app.use(express.static(path.join(__dirname, '../dist')))
+
+app.get('*', (req, res) =>{
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
+})
 // Start server
 start();
 
