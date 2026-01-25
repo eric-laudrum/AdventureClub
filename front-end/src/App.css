@@ -3,10 +3,20 @@
   margin: 0 auto;
   text-align: center;
 
+
 }
 
+.main_body{
+    padding: 0 5% 20px 5%;
+}
 
-/* /\/\/\/\/\/\ Navigation Bar /\/\/\/\/\/\ */
+/* /\/\/\/\/\/\/\/\ Header /\/\/\/\/\/\/\/\ */
+.header_section{
+  text-align: start;
+
+}
+
+/* /\/\/\/\/\/\/\/\ Navigation Bar /\/\/\/\/\/\/\/\ */
 .nav_bar{
   display: flex;
   width: 100%;
@@ -60,20 +70,44 @@ h3, p {
   text-align: start;
   padding: 10px 50px;
 
-  border-bottom: 1px solid rgb(218, 217, 215);
-  border: 4px dotted black;
+  border-bottom: 1px solid rgb(218, 217, 100);
+  border: 1px solid rgba(228, 221, 221, 0.408);
 }
 
 .article_title{
   margin: 2px;
 
-  border: 1px solid red;
 }
 
 .article_text{
   margin: 0;
 
-  border: 1px solid red;
+}
+
+.about_section{
+  display: flex;
+  flex-direction: column;
+}
+
+.section_list{
+  border: 2px solid #cccccc16;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.section_list li{
+  border-bottom: 2px solid #cccccc11;
+  margin: 10px;
 }
 
 
+
+
+.about_section{
+  text-align: start;
+}
+
+.text_link{
+  color: blue;
+}

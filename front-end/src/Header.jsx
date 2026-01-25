@@ -4,8 +4,11 @@ export default function Header(){
     
     return(
         <>
-        <h2>Adventure Club!</h2>
-        <NavBar />
+        <div className="header_section">
+            <h2>Adventure Club!</h2>
+            <NavBar />
+        </div>
+        
         
         </>
         
