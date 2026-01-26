@@ -157,3 +157,7 @@ p {
   border-radius: 10px;
   background-color: #212121;
 }
+
+.article_text_input{
+  color: red;
+}
