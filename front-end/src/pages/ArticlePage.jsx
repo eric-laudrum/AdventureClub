@@ -40,17 +40,29 @@ export default function ArticlePage(){
         const updatedArticleData = response.data;
         setComments(updatedArticleData.comments);
     }
+
+
     return(
         <>
-        <h1>{article.title}</h1>
-        {user && <button onClick={( onUpvoteClicked )}>Upvote</button> } {/* only show if user logged in */}
-        <p>This article has {upvotes} upvotes!</p>
-        {article.content.map(p => <p key={p}>{p}</p> )}
-        {user 
-            ? <AddCommentForm onAddComment={onAddComment}/>
-            : <p>Log in to add a comment </p> 
-        }
-        <CommentsList comments={comments}/>
+        <div className="section_container">
+            
+            {user && <button onClick={( onUpvoteClicked )}>Upvote</button> }
+            
+            <h2 className='section_title'>{article.title}</h2>
+
+            <p className="article_text" style={{"text-decoration": "none"}}>{upvotes} upvotes</p>
+            
+            {article.content.map(p => <p key={p}>{p}</p> )}
+            
+            {user 
+                ? <AddCommentForm onAddComment={onAddComment}/>
+                : <p>Log in to add a comment </p> 
+            }
+
+            <CommentsList comments={comments}/>
+
+        </div>
+        
         </>
 
         

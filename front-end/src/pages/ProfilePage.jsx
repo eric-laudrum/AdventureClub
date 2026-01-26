@@ -47,13 +47,14 @@ export default function  ProfilePage(){
 
     return(
         <>
-        <div className="profile_container">
-            <h3>Profile</h3>
-            { isOwner && <button>Edit Profile</button> }
-
-            <p>Email: { profile.email || user?.email }</p>
+        <div className="section_container">
+                { isOwner && <button className="edit_button">Edit Profile</button> }
+                <h2 className="section_title">Profile</h2>
+               
+          
             
             <div className="profile_details">
+                <p>Email: {profile.email}</p>
                 <p>ID: { profile.uid }</p>
                 <p>Bio: { profile.bio || "No bio added" }</p>
             </div>

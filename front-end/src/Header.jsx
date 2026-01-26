@@ -5,7 +5,7 @@ export default function Header(){
     return(
         <>
         <div className="header_section">
-            <h2>Adventure Club!</h2>
+            <h1 class="header_title">Adventure Club</h1>
             <NavBar />
         </div>
         
