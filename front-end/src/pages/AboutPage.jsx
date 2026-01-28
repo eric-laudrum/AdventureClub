@@ -7,7 +7,7 @@ export default function AboutPage(){
             <p className="section_text">Welcome to the Seniors For Nature Outdoor Club website. Please explore our home page and check out our upcoming events. </p>
 
 
-            <h3 className="sub_title">Who we are</h3>
+            <h3 className="sub-title">Who we are</h3>
             <ul className="section_list">
                 <li>
                     The Seniors for Nature Outdoor Club enjoys a variety of activities throughout the year:  canoeing/kayaking, cycling, hiking, cross-country skiing, snowshoeing, contemplative  outings, and socializing.
@@ -35,7 +35,7 @@ export default function AboutPage(){
                 </li>
             </ul>
 
-            <h3 className="sub_title">About Us</h3>
+            <h3 className="sub-title">About Us</h3>
             <ul className="section_list">
                 <li>
                     The Club was established in 1985 by enthusiastic canoeists from across the Greater Toronto Area and beyond. It is affiliated with Ontario Nature.
@@ -51,7 +51,7 @@ export default function AboutPage(){
                 </li>
             </ul>
 
-            <h3 className="sub_title">Spring & Summer Activities</h3>
+            <h3 className="sub-title">Spring & Summer Activities</h3>
             <ul className="section_list">
                 <li>
                     In the spring, activities often kick off with the New Members day.  Canoes are available and novices are paired with experienced canoeists.  (the club has 4 canoes and a kayak as well as mandatory safety equipment, tie downs and other items which are available to members at no cost). All enjoy sharing experiences at the BBQ. 
@@ -61,7 +61,7 @@ export default function AboutPage(){
                 </li>
             </ul>
 
-            <h3 className="sub_title">Fall & Winter Activities</h3>
+            <h3 className="sub-title">Fall & Winter Activities</h3>
             <ul className="section_list">
                 <li>
                     We hold meetings monthly from October to May, usually with a guest speaker. We meet at 12:45 PM on the first Tuesday of each month at Earl Bales Community Centre (4169 Bathurst Street, corner of Bathurst & Sheppard). Here members initiate and renew friendships over coffee and snacks, are stimulated by educational programs and take part in the business of running this non-profit club.

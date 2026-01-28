@@ -45,20 +45,30 @@ export default function ArticlePage(){
     return(
         <>
         <div className="section_container">
-            
-            {user && <button onClick={( onUpvoteClicked )}>Upvote</button> }
-            
-            <h2 className='section_title'>{article.title}</h2>
 
-            <p className="article_text" style={{"text-decoration": "none"}}>{upvotes} upvotes</p>
+            <div className="article-head">
             
+                {/* -- Article Title -- */}
+                <h2 className='section_title'>{article.title}</h2>
+                {user && <button className="upvote-button" onClick={( onUpvoteClicked )}>Upvote</button> }
+            
+            </div>
+            
+            
+            {/* -- Upvotes -- */}
+            <p className="article_text">{upvotes} upvotes</p>
+            
+            {/* -- Article Text -- */}
             {article.content.map(p => <p key={p}>{p}</p> )}
             
+
+            {/* -- Comment Form -- */}
             {user 
                 ? <AddCommentForm onAddComment={onAddComment}/>
                 : <p>Log in to add a comment </p> 
             }
 
+            {/* -- Comments -- */}
             <CommentsList comments={comments}/>
 
         </div>

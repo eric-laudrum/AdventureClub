@@ -54,7 +54,6 @@ a {
 
 a:hover {
   color: #e7cb6f;
-  font-weight: 500;
 }
 
 h1,  h2{
@@ -66,37 +65,44 @@ h1,  h2{
   line-height: 1.1;
   color: rgb(40, 40, 40);
   
-  margin-bottom: 0px;
+  margin-bottom: 1em;
   margin-top: 0px;
 }
 
 p {
-
   color: rgb(40, 40, 40);
 }
 
-.article_card{
+.article-section{
   display: flex;
   flex-direction: column;
 
   justify-content: start;
-
 }
 
 .article_pane{
   display: flex;
   flex-direction: column;
   align-items: start;
+  border-radius: 20px;
+  padding: 1em;
+  margin-bottom: 1em;
+  box-shadow: 5px 5px #adadad64;
+}
+.article_pane:nth-child(odd){
+  background-color: rgb(184, 219, 231);
+}
+.article_pane:nth-child(even){
+  background-color: rgba(184, 219, 231, 0.052);
 
 }
 
-.article_title{
+.article-title{
   color: rgb(40, 40, 40);
 
 }
 
 .article_text{
-  margin: 0;
   color: rgb(40, 40, 40);
 
 }
@@ -109,29 +115,24 @@ p {
   align-items: start;
   text-align: left;
 
-
 }
 
 .section_list{
   display: flex;
   flex-direction: column;
-  padding: 20px;
+
   margin: auto;
-
-}
-
-.section_list li{
-  border-bottom: 2px solid #cccccc11;
-  margin: 5px;
+  border: 2px solid green;
 
 }
 
 .section_text{
 
   margin: auto;
+
 }
 
-.sub_title{
+.sub-title{
   margin: 20px 0 0 0;
   color: rgb(40, 40, 40);
 }
@@ -160,4 +161,51 @@ p {
 
 .article_text_input{
   color: red;
+}
+
+.upvote-button{
+  margin: 0 0 1rem 1rem;
+  padding: 1em;
+  border-radius: 10px;
+}
+
+.article-head{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.comment-form{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  align-content: center;
+  justify-items: center;
+
+  border: 1px solid black;
+  
+}
+
+.add-comment{
+  display: flex;
+  padding: 5px;
+  width: 125px;
+  border-radius: 10px;
+  justify-content: center;
+  box-shadow: 2px 2px #adadad64;
+  align-self: center;
+
+}
+
+.article-title-input{
+  margin-left: 1em;
+  width: 30%;
+  min-width: 200px;
+
+}
+
+.article-text-input{
+  margin-left: 1em;
+  width: 90%;
 }
