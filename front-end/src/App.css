@@ -117,6 +117,24 @@ p {
 
 }
 
+.section_header{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+
+
+
+  border: 1px solid red;
+}
+
+.section_title{
+  
+  border: 1px solid blue;
+  
+}
+
 .section_list{
   display: flex;
   flex-direction: column;
@@ -159,9 +177,7 @@ p {
   background-color: #212121;
 }
 
-.article_text_input{
-  color: red;
-}
+
 
 .upvote-button{
   margin: 0 0 1rem 1rem;
@@ -209,3 +225,49 @@ p {
   margin-left: 1em;
   width: 90%;
 }
+
+
+
+.add_button{
+  background-color: rgb(62, 62, 62);
+  font-weight: 5000;
+  font-size: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.new_article_form{
+  border: 2px solid red;
+  display: flex;
+  flex-direction: column;
+}
+
+.input_field{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+
+
+.article_title_input{
+  height: 2em;
+  width: 30%;
+  min-width: 20em;
+
+  border-radius: 8px;
+  padding: 2em;
+  background-color: rgb(221, 221, 221);
+  color: black;
+  
+}
+
+.article_text_input{
+  height: 10em;
+  border-radius: 8px;
+  padding: 2em;
+  background-color: rgb(221, 221, 221);
+  color: black;
+  
+}
+

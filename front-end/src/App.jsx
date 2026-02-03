@@ -15,6 +15,7 @@ import LoginPage from './pages/LoginPage';
 import CreateAccountPage from './pages/CreateAccountPage';
 import Header from './Header'
 import ProfilePage from './pages/ProfilePage';
+import AddArticlePage from './pages/AddArticlePage';
 
 const routes = [{
   path: '/',
@@ -46,7 +47,13 @@ const routes = [{
   }, {
     path: '/profile/:id',
     element: <ProfilePage />
-  }]
+  }, {
+    path: '/add-article',
+    element: <AddArticlePage />
+  }
+  
+
+]
 }]
 
 const router = createBrowserRouter(routes);
