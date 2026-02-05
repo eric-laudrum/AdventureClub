@@ -1,13 +1,10 @@
 import { useState } from 'react'
-import{
-  createBrowserRouter,
-  RouterProvider
-} from 'react-router-dom'
+import{ createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 import './App.css'
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
-import ArticlesListPage from './pages/ArticlesListPage';
+import ArticlesListPage, { loader as articlesListLoader } from './pages/ArticlesListPage';
 import ArticlePage, {loader as articleLoader} from './pages/ArticlePage';
 import Layout from './Layout';
 import NotFoundPage from './pages/NotFoundPage';
@@ -24,7 +21,8 @@ const routes = [{
   
   children:[{
     path: '/',
-    element: <HomePage />
+    element: <HomePage />,
+    loader: articlesListLoader
   },{
     path: '/header',
     element: <Header />
@@ -33,11 +31,12 @@ const routes = [{
     element: <AboutPage />
   }, {
     path: '/articles',
-    element: <ArticlesListPage />
+    element: <ArticlesListPage />,
+    loader: articlesListLoader,
   },{
     path: '/articles/:name',
     element: <ArticlePage />,
-    loader: articleLoader,
+    loader: articleLoader
   },{
     path: '/login',
     element: <LoginPage />

@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import { MongoClient, ServerApiVersion, ObjectId } from 'mongodb';
 import  admin  from 'firebase-admin';
@@ -5,6 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import  { fileURLToPath }  from 'url';
 import cors from 'cors';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,6 +32,7 @@ app.use(cors({
 
 // -------------------------------- Public API Routes ---------------------------- 
 
+//  ------------ GET ------------ 
 // Profile
 app.get('/api/profile/:uid', async (req, res) => {
     try {
@@ -47,6 +50,33 @@ app.get('/api/profile/:uid', async (req, res) => {
     }
 });
 
+// Get all articles 
+app.get('/api/articles', async(req, res) =>{
+    try{
+        const articles = await db.collection('articles').find().toArray();
+        res.json( articles );
+    } catch(err){
+        res.status(500).json({ message: "Error fetching articles: ", err});
+    }
+    
+});
+
+// Get article by name
+app.get('/api/articles/:name', async(req, res) =>{
+    const { name } = req.params;
+    const article = await db.collection('articles').findOne({ name });
+
+    if(article){
+        res.json( article );
+    } else{
+        res.status(404).json({ message: "Article not found "});
+    }
+
+});
+
+
+
+// ------------  POST ------------ 
 // Register user
 app.post('/api/register', async(req, res) =>{
     console.log("Registration request received for UID: ", req.body.uid);
@@ -75,62 +105,104 @@ app.post('/api/register', async(req, res) =>{
     }
 });
 
-// Load Article
-app.get('/api/articles/:name', async(req, res) =>{
-    const { name } = req.params;
-    const article = await db.collection('articles').findOne({ name });
-    article ? res.json(article) : res.sendStatus(404);
-});
-
-
 
 
 // ---------------------------- Auth Middleware ------------------------
 
 app.use(async function(req, res, next){
+
+    console.log("Middleware triggered for: ", req.url);
     const { authtoken } = req.headers;
+    
     if( authtoken ){
         try{
             const user = await admin.auth().verifyIdToken( authtoken );
+            console.log("Token verified for: ", user.email);
             req.user = user;
             next(); 
         } catch ( err ){
+            console.log("Token verification failed: ", err.message);
             res.status(401).json({ message: "Error: Invalid Token ", err })
         }
     
     } else{ 
+        console.log("No authtoken found in headers");
         res.sendStatus(401);
+    }
+});
+
+// Create a new article
+app.post('/api/articles', async(req, res) => {
+    
+
+    console.log("\n\n/////////////////Attempt to Create New Article/////////////////");
+    console.log("User from Token:", req.user.email);
+    console.log("Data received:", req.body);
+    // Destructure info from frontend
+    const { articleTitle, articleText } = req.body;
+    const { email, uid } = req.user;
+
+    // Verify article title
+    if(!articleTitle){
+        return res.status(400).json({ message: "Error: Article title is required"});
+    }
+
+    // Url friendly article name
+    const name = articleTitle.toLowerCase().split(' ').join('-');
+
+    console.log("REQUEST REACHED SERVER: ", req.body);
+
+    try {
+        const newArticle = {
+            name: name,
+            title: articleTitle,
+            content: [ articleText ],
+            upvotes: 0,
+            upvoteIds: [],
+            comments: [],
+            authorUid: uid,
+            authorEmail: email
+        };
+
+        const result = await db.collection('articles').insertOne(newArticle);
+
+        const verifyArticle = await db.collection('articles').findOne({ _id: result.insertedId });
+        console.log("VERIFICATION FROM DB:", verifyArticle);
+        
+        console.log("Insert Result:", result);
+        
+        res.status(201).json(newArticle); 
+        
+    } catch(err) {
+        console.error("Critical DB Insert Error: ", err);
+        res.status(500).json({ message: "Error saving article", error: err.message });
     }
 });
 
 // ------------------------  Protected API Routes ------------------------
 
-// Upvote Article
+// Upvote article
 app.post('/api/articles/:name/upvote', async (req, res)=>{
     const{ name } = req.params;
     const { uid } = req.user;
 
-    const article = await db.collection('articles').findOne({ name });
+    const updatedArticle = await db.collection('articles').findOneAndUpdate(
+        { name },
+        {
+            $inc: { upvotes: 1 },
+            $push: { upvoteIds: uid }, 
+        },
+        { returnDocument: "after" }
+    );
 
-    const upvoteIds = article.upvoteIds || [];
-    const canUpvote = uid && !upvoteIds.includes(uid);
-
-    if(canUpvote){
-        const updatedArticle = await db.collection('articles').findOneAndUpdate({name}, {
-        $inc: { upvotes: 1 },
-        push: {upvoteIds: uid },
-    }, {
-        returnDocument: "after",
-    });
-
+    if (updatedArticle) {
         res.json(updatedArticle);
-
     } else {
-        res.sendStatus(403); // User not authorized
+        res.status(404).send("Article not found");
     }
 });
 
-// Comment on Article
+// Comment on article
 app.post('/api/articles/:name/comments', async(req, res)=>{
     // const name = req.params.name; following line is the equivalent in destructured form 
     const {name} = req.params;
@@ -145,6 +217,8 @@ app.post('/api/articles/:name/comments', async(req, res)=>{
 
     res.json(updatedArticle);
 });
+
+
 
 
 // ----------------------- Static Files & React Routing -------------------
@@ -162,7 +236,7 @@ async function connectToDB(){
         // Local connection
         ? 'mongodb://127.0.0.1:27017' 
         // Production / deployed
-        : `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.3ridrrt.mongodb.net/?appName=Cluster0`
+        : `mongodb+srv://${ process.env.MONGODB_USERNAME }:${ process.env.MONGODB_PASSWORD }@cluster0.3ridrrt.mongodb.net/`
 
     const client = new MongoClient(uri, {
         serverApi: {
@@ -180,15 +254,20 @@ async function connectToDB(){
 const PORT = process.env.PORT || 8000;
 async function start(){
 
-    // Start server message
-    app.listen(PORT, () => {
-        console.log('Server is listening on port ' + PORT);
-    });
+
+
+
     try{
         await connectToDB();
         console.log("\nDatabase connection successful\n");
+        
+        // Start server message
+        app.listen(PORT, () => {
+            console.log('Server is listening on port ' + PORT);
+        });
     } catch (err){
         console.error("\nDatabase connection failed: ", err, "\n");
+        process.exit(1);
     }
 }
 

@@ -3,24 +3,21 @@ import { useParams, useLoaderData } from 'react-router-dom';
 import axios from 'axios';
 import CommentsList from '../CommentsList';
 import AddCommentForm from '../AddCommentForm';
-import articles from '../article-content';
 import  useUser  from '../use_user';
-
 
 
 export default function ArticlePage(){
     const { name } = useParams();
-    const { upvotes: initialUpvotes, comments: initialComments} = useLoaderData();
-    const[upvotes, setUpvotes] = useState(initialUpvotes);
-    const [comments, setComments] = useState(initialComments);
+    const { articleData } = useLoaderData();
+
+    console.log("\nDATA SOURCE: ", articleData);
+
+
+    const[upvotes, setUpvotes] = useState(articleData.upvotes);
+    const [comments, setComments] = useState(articleData.comments);
 
     const { isLoading, user } = useUser();
 
-
-    const article = articles.find(a => a.name === name);
-    if(!article){
-        return <h1>Error: Article not found</h1>
-    }
  
     async function onUpvoteClicked(){
         const token = user && await user.getIdToken();
@@ -49,8 +46,8 @@ export default function ArticlePage(){
             <div className="article-head">
             
                 {/* -- Article Title -- */}
-                <h2 className='section_title'>{article.title}</h2>
-                {user && <button className="upvote-button" onClick={( onUpvoteClicked )}>Upvote</button> }
+                <h2 className='section_title'>{articleData.title}</h2>
+                { user && <button className="upvote-button" onClick={( onUpvoteClicked )}>Upvote</button> }
             
             </div>
             
@@ -59,7 +56,7 @@ export default function ArticlePage(){
             <p className="article_text">{upvotes} upvotes</p>
             
             {/* -- Article Text -- */}
-            {article.content.map(p => <p key={p}>{p}</p> )}
+            {articleData.content.map((p, i) => <p key={i} className="article_text">{p}</p> )}
             
 
             {/* -- Comment Form -- */}
@@ -81,6 +78,5 @@ export default function ArticlePage(){
 
 export async function loader({params}){
     const response = await axios.get('/api/articles/' + params.name);
-    const {upvotes, comments} = response.data;
-    return {upvotes, comments};
+    return { articleData: response.data };
 }

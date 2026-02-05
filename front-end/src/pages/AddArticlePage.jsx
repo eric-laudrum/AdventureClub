@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import  useUser  from '../use_user';
 
@@ -62,11 +63,11 @@ export default function AddArticleForm({ articleName, onArticleUpdated }){
                 {/* --- ARTICLE TEXT --- */}
                 <label className="input_field">
                     Text:
-                    <input
+                    <textarea
                         className="article_text_input" 
-                        type="text" 
                         value={ articleText } 
-                        onChange={e => setArticleText(e.target.value)}
+                        onChange={ e => setArticleText(e.target.value)}
+                        rows="10"
                     />
 
                 </label>
