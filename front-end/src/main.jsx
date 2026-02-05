@@ -6,12 +6,12 @@ import axios from 'axios';
 import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDtUyUa7uSui6fj_1V_-wb2d3sNj56ywDI",
-  authDomain: "full-stack-react-3739f.firebaseapp.com",
-  projectId: "full-stack-react-3739f",
-  storageBucket: "full-stack-react-3739f.firebasestorage.app",
-  messagingSenderId: "849259941495",
-  appId: "1:849259941495:web:2ac9d4554ce61745b14072"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 // Initialize Firebase
