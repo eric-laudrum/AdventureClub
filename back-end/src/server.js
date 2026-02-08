@@ -8,9 +8,12 @@ import  { fileURLToPath }  from 'url';
 import cors from 'cors';
 import multer from 'multer'
 
+// Handle files with Multer temporarily before Firebase
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage});
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const upload = multer({ dest: 'uploads/' });
 
 // Credentials
 const credentials = JSON.parse(
@@ -19,9 +22,11 @@ const credentials = JSON.parse(
 
 // App Initialization
 admin.initializeApp({
-  credential: admin.credential.cert(credentials)
+  credential: admin.credential.cert(credentials),
+  storageBucket: 'full-stack-react-3739f.appspot.com'
 });
 
+const bucket = admin.storage().bucket();
 const app = express();
 app.use(express.json());
 
@@ -141,6 +146,7 @@ app.post('/api/articles', upload.array('images'), async(req, res) => {
     console.log("User from Token:", req.user.email);
     console.log("Data received:", req.body);
     console.log("Files received:", req.files);
+    
     // Destructure info from frontend
     const { articleTitle, articleText } = req.body;
     const { email, uid } = req.user;
@@ -152,12 +158,27 @@ app.post('/api/articles', upload.array('images'), async(req, res) => {
 
     // Url friendly article name
     const name = articleTitle.toLowerCase().split(' ').join('-');
+    const imageUrls = [];
 
     // Debugging log
     console.log("REQUEST REACHED SERVER: ", req.body);
 
-    // Find images
-    const imageUrls = req.files ? req.files.map( file => `/uploads/${file.filename}`) : [];
+    // Upload files to Firebase
+    if( req.files ){
+        for( const file of req.files ){
+            const fileName = `${Date.now()}_${file.originalname}`;
+            const fileRef = bucket.file(`articles/${name}/${fileName}`);
+
+            await fileRef.save(file.buffer, {
+                metadata: { contentType: file.mimetype },
+            });
+
+            await fileRef.makePublic();
+
+            const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileRef.name}`;
+            imageUrls.push( publicUrl )
+        }
+    }
 
     // Set Primary image & default to 1st
     const primaryImage = imageUrls.length > 0 ? imageUrls[0]: null;

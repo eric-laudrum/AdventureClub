@@ -12,7 +12,18 @@ export default function ArticlesList({ articles }){
                     key={article._id || `${article.name}-${index}`} 
                     to={'/articles/' + article.name} 
                     className='article_pane'
-                >
+                >xw
+
+                    {article.primaryImage && (
+                        <img
+                            src={ article.primaryImage }
+                            alt={ article.title }
+                            className="article_image"
+                            />
+                    )}
+
+
+
                     <h3 className="article-title">{article.title}</h3>
                     <p className="article_text">
                         {article.content && article.content[0] 
