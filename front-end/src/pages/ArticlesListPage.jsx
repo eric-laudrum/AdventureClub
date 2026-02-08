@@ -8,6 +8,7 @@ export default function ArticlesListPage(){
     
     const data = useLoaderData();
     console.log("FRONTEND RECEIVED DATA:", data);
+    
     const { articles } = useLoaderData()|| { articles: [] };
     
     return(

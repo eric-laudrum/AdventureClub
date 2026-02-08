@@ -8,35 +8,54 @@ export default function AddArticleForm({ articleName, onArticleUpdated }){
 
     const [ titleText, setArticleTitleText ] = useState('');
     const [ articleText, setArticleText ] = useState('');
+    const [ files, setFiles ] = useState([]);
     const { user } = useUser();
 
-    const submitArticle = async () => {
 
-        // Verify user
+    const submitArticle = async () => {
+        // Verify user - only users can submit articles
         if( !user ){
             console.log("Error: no user logged in");
             return;
         }
 
-
         try{
             const token = user && await user.getIdToken();
 
-            const headers = token ? { authtoken: token } : {};
+            const headers = token ? { 
+                authtoken: token,
+                'Content-Type': 'multipart/form-data'
+            } : {};
 
-            const response = await axios.post(`/api/articles`, {
-                articleTitle: titleText,
-                articleText: articleText,
-            }, { headers });
+            // Process form data
+            const formData = new FormData();
+            formData.append('articleTitle', titleText);
+            formData.append('articleText', articleText);
 
-            const updatedArticleData = response.data;
-            if ( onArticleUpdated ){
-                onArticleUpdated( updatedArticleData );
+            // Add files
+            for( let i = 0; i < files.length; i++){
+                formData.append('images', files[i]);
+            }
+
+            // 
+            const response = await axios.post(`/api/articles`, formData, { 
+                headers:{
+                    authtoken: token,
+                    'Content-Type' : 'multipart/form-data'
+                } 
+            });
+            
+            const updateArticleData = response.data;
+
+            // 
+            if( onArticleUpdated ){
+                onArticleUpdated( updateArticleData );
             }
 
             // Reset form
             setArticleTitleText('');
             setArticleText('');
+            setFiles([]);
 
 
         } catch( error ){
@@ -45,7 +64,9 @@ export default function AddArticleForm({ articleName, onArticleUpdated }){
     };
 
     return(
+        <>
         <div className="add_article_container">
+
             <h3>New Article</h3>
             <div className="new_article_form">
 
@@ -72,6 +93,16 @@ export default function AddArticleForm({ articleName, onArticleUpdated }){
 
                 </label>
 
+                {/* ADD IMAGES */}
+                <label className="input_field">
+                    Image(s)
+                    <input
+                        type="file"
+                        multiple
+                        onChange={ e => setFiles( e.target.files )}
+                        />
+                </label>
+
 
                 {/* --- ADD BUTTON --- */}
                 <button 
@@ -82,5 +113,6 @@ export default function AddArticleForm({ articleName, onArticleUpdated }){
 
             </div>
         </div>
+        </>
     )
 }

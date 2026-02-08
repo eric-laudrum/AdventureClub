@@ -6,10 +6,11 @@ import fs from 'fs';
 import path from 'path';
 import  { fileURLToPath }  from 'url';
 import cors from 'cors';
-
+import multer from 'multer'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const upload = multer({ dest: 'uploads/' });
 
 // Credentials
 const credentials = JSON.parse(
@@ -112,6 +113,7 @@ app.post('/api/register', async(req, res) =>{
 app.use(async function(req, res, next){
 
     console.log("Middleware triggered for: ", req.url);
+    console.log("Middleware headers: ", req.headers);
     const { authtoken } = req.headers;
     
     if( authtoken ){
@@ -132,12 +134,13 @@ app.use(async function(req, res, next){
 });
 
 // Create a new article
-app.post('/api/articles', async(req, res) => {
+app.post('/api/articles', upload.array('images'), async(req, res) => {
     
 
     console.log("\n\n/////////////////Attempt to Create New Article/////////////////");
     console.log("User from Token:", req.user.email);
     console.log("Data received:", req.body);
+    console.log("Files received:", req.files);
     // Destructure info from frontend
     const { articleTitle, articleText } = req.body;
     const { email, uid } = req.user;
@@ -150,7 +153,14 @@ app.post('/api/articles', async(req, res) => {
     // Url friendly article name
     const name = articleTitle.toLowerCase().split(' ').join('-');
 
+    // Debugging log
     console.log("REQUEST REACHED SERVER: ", req.body);
+
+    // Find images
+    const imageUrls = req.files ? req.files.map( file => `/uploads/${file.filename}`) : [];
+
+    // Set Primary image & default to 1st
+    const primaryImage = imageUrls.length > 0 ? imageUrls[0]: null;
 
     try {
         const newArticle = {
@@ -161,16 +171,13 @@ app.post('/api/articles', async(req, res) => {
             upvoteIds: [],
             comments: [],
             authorUid: uid,
-            authorEmail: email
+            authorEmail: email,
+            imageUrls: imageUrls,
+            primaryImage: primaryImage
+
         };
 
         const result = await db.collection('articles').insertOne(newArticle);
-
-        const verifyArticle = await db.collection('articles').findOne({ _id: result.insertedId });
-        console.log("VERIFICATION FROM DB:", verifyArticle);
-        
-        console.log("Insert Result:", result);
-        
         res.status(201).json(newArticle); 
         
     } catch(err) {
