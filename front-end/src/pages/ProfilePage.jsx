@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
-import useUser from "../use_user";
+import useUser from "../../hooks/useUser";
 
 
 

@@ -36,9 +36,85 @@ app.use(cors({
 }))
 
 
+
+
 // -------------------------------- Public API Routes ---------------------------- 
 
-//  ------------ GET ------------ 
+// Register user
+app.post('/api/register', async(req, res) =>{
+    console.log("Registration request received for UID: ", req.body.uid);
+    try{
+        const { uid, email } = req.body;
+        const existingUser = await db.collection('users').findOne({ uid });
+
+        if( !existingUser ){
+            const result = await db.collection('users').insertOne({
+                uid,
+                email,
+                upvotedArticles: [],
+                comments: [],
+                isAdmin: false,
+            });
+            
+            console.log("User inserted into DB:", result.insertedId);
+            res.status(201).json({ message: "User registered successfully"})
+        } else{
+            console.log("User already exists with ID:", existingUser._id );
+            res.status(200).json({ message: "User already exists"});
+        }
+    } catch(err){
+        console.log("Registration error: ", err);
+        res.status(500).json({ message: 'Error registering user', error: err.message });
+    }
+});
+
+
+// ---------------------------- Auth Middleware ------------------------
+
+app.use('/api', async function(req, res, next) {
+    const { authtoken } = req.headers;
+
+    console.log("Checking security for path:", req.path);
+
+    const isPublicGet = req.method === 'GET' && 
+                        !req.path.includes('edit-article') && 
+                        !req.path.includes('profile');
+
+    if (isPublicGet) {
+        return next();
+    }
+
+    if (authtoken) {
+        try {
+            const firebaseUser = await admin.auth().verifyIdToken(authtoken);
+            const userDoc = await db.collection('users').findOne({ uid: firebaseUser.uid });
+            req.user = { ...firebaseUser, isAdmin: userDoc?.isAdmin || false };
+            next();
+        } catch (err) {
+            res.status(401).json({ message: "Invalid Token" });
+        }
+    } else {
+        res.status(401).json({ message: "No token provided" });
+    }
+});
+
+
+// ------------------------  Protected API Routes ------------------------
+
+// ------------  GET ------------ 
+// Edit article by name
+app.get('/api/edit-article/:name', async(req, res) =>{
+    const { name } = req.params;
+    const article = await db.collection('articles').findOne({ name });
+
+    if(article){
+        res.json( article );
+    } else{
+        res.status(404).json({ message: "Article not found "});
+    }
+
+});
+
 // Profile
 app.get('/api/profile/:uid', async (req, res) => {
     try {
@@ -57,14 +133,16 @@ app.get('/api/profile/:uid', async (req, res) => {
 });
 
 // Get all articles 
-app.get('/api/articles', async(req, res) =>{
-    try{
+app.get('/api/articles', async (req, res) => {
+    try {
+        if (!db) {
+            return res.status(503).json({ message: "Database connecting, please try again..." });
+        }
         const articles = await db.collection('articles').find().toArray();
-        res.json( articles );
-    } catch(err){
-        res.status(500).json({ message: "Error fetching articles: ", err});
+        res.json(articles);
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching articles", err });
     }
-    
 });
 
 // Get article by name
@@ -80,64 +158,7 @@ app.get('/api/articles/:name', async(req, res) =>{
 
 });
 
-
-
 // ------------  POST ------------ 
-// Register user
-app.post('/api/register', async(req, res) =>{
-    console.log("Registration request received for UID: ", req.body.uid);
-    try{
-        const { uid, email } = req.body;
-        const existingUser = await db.collection('users').findOne({ uid });
-
-        if( !existingUser ){
-            const result = await db.collection('users').insertOne({
-                uid,
-                email,
-                upvotedArticles: [],
-                comments: [],
-
-            });
-            
-            console.log("User inserted into DB:", result.insertedId);
-            res.status(201).json({ message: "User registered successfully"})
-        } else{
-            console.log("User already exists with ID:", existingUser._id );
-            res.status(200).json({ message: "User already exists"});
-        }
-    } catch(err){
-        console.log("Registration error: ", err);
-        res.status(500).json({ message: 'Error registering user', error: err.message });
-    }
-});
-
-
-
-// ---------------------------- Auth Middleware ------------------------
-
-app.use(async function(req, res, next){
-
-    console.log("Middleware triggered for: ", req.url);
-    console.log("Middleware headers: ", req.headers);
-    const { authtoken } = req.headers;
-    
-    if( authtoken ){
-        try{
-            const user = await admin.auth().verifyIdToken( authtoken );
-            console.log("Token verified for: ", user.email);
-            req.user = user;
-            next(); 
-        } catch ( err ){
-            console.log("Token verification failed: ", err.message);
-            res.status(401).json({ message: "Error: Invalid Token ", err })
-        }
-    
-    } else{ 
-        console.log("No authtoken found in headers");
-        res.sendStatus(401);
-    }
-});
-
 // Create a new article
 app.post('/api/articles', upload.array('images'), async(req, res) => {
     
@@ -207,8 +228,6 @@ app.post('/api/articles', upload.array('images'), async(req, res) => {
     }
 });
 
-// ------------------------  Protected API Routes ------------------------
-
 // Upvote article
 app.post('/api/articles/:name/upvote', async (req, res)=>{
     const{ name } = req.params;
@@ -246,15 +265,84 @@ app.post('/api/articles/:name/comments', async(req, res)=>{
     res.json(updatedArticle);
 });
 
+// ------------  PUT ------------ 
+app.put('/api/articles/:name', async(req, res) =>{
+    const { name } = req.params;
+    const { articleText } = req.body;
+    const { uid, isAdmin } = req.user;
 
+    try {
+        const article = await db.collection('articles').findOne({ name });
+        if (!article) return res.status(404).json({ message: "Article not found" });
+
+        const isAuthor = article.authorUid === uid;
+        
+        // Allow editing for author / admin
+        if (!isAuthor && !isAdmin) {
+            return res.status(403).json({ message: "Unauthorized: Admins or Authors only." });
+        }
+
+        const updatedArticle = await db.collection('articles').findOneAndUpdate(
+            { name },
+            { $set: { content: [articleText] } },
+            { returnDocument: 'after' }
+        );
+
+        res.json(updatedArticle);
+
+    } catch(err){
+        res.status(500).json({ message: "Error updating article: ", error: err.message });
+    }
+});
+
+// ------------  DELETE ------------ 
+app.delete('/api/articles/:name/images', async( req, res ) =>{
+    const { name } = req.params;
+    const { imageUrl } = req.body;
+
+    try{
+        // Delete from firebase storage
+        const fileRef = bucket.file(imageUrl.split(`${bucket.name}/`)[1]);
+        await fileRef.delete();
+
+        // Remove URL from MongoDB
+        const updatedArticle = await db.collection('articles').findOneAndUpdate(
+            { name },
+            { 
+                $pull: { imageUrls: imageUrl }, // Remove from array
+            },
+            { returnDocument: 'after' }
+        );
+
+        // Reset primary images
+        if (updatedArticle.primaryImage === imageUrl) {
+            const newPrimary = updatedArticle.imageUrls.length > 0 
+                ? updatedArticle.imageUrls[0] 
+                : null;
+                
+            await db.collection('articles').updateOne(
+                { name },
+                { $set: { primaryImage: newPrimary } }
+            );
+            // Re-fetch to get the updated document to send back
+            const finalArticle = await db.collection('articles').findOne({ name });
+            return res.json(finalArticle);
+        }
+
+        res.json(updatedArticle);
+    } catch (err) {
+        res.status(500).json({ message: "Error deleting image", error: err.message });
+    }
+});
 
 
 // ----------------------- Static Files & React Routing -------------------
-app.use(express.static(path.join(__dirname, '../dist')))
+app.use(express.static(path.join(__dirname, '../dist')));
 
-app.get(/^(?!\/api).+/, (req, res) =>{
+
+app.get(/^(?!\/api).+/, (req, res) => {
     res.sendFile(path.join(__dirname, '../dist/index.html'));
-})
+});
 
 // Conenct to DB
 let db;
@@ -279,29 +367,27 @@ async function connectToDB(){
     db = client.db('full-stack-react-db');
 }
 
-const PORT = process.env.PORT || 8000;
+
 async function start(){
-
-
-
-
     try{
         await connectToDB();
         console.log("\nDatabase connection successful\n");
         
+        const PORT = process.env.PORT || 8000;
+
         // Start server message
         app.listen(PORT, () => {
             console.log('Server is listening on port ' + PORT);
         });
+
     } catch (err){
         console.error("\nDatabase connection failed: ", err, "\n");
         process.exit(1);
     }
 }
 
-app.use(express.static(path.join(__dirname, '../dist')))
-
-// Start server
+// Start Server
 start();
+
 
 

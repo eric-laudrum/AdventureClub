@@ -70,7 +70,7 @@ p {
   color: rgb(40, 40, 40);
 }
 
-.article-section{
+.article_list{
   display: flex;
   flex-direction: column;
 
@@ -84,8 +84,10 @@ p {
   border-radius: 20px;
   padding: 1em;
   margin-bottom: 1em;
-  box-shadow: 5px 5px #adadad64;
+  box-shadow:  0 5px 5px #adadad64;
+  border: 2px solid red;
 }
+
 .article_pane:nth-child(odd){
   background-color: rgb(239, 247, 249);
 }
@@ -94,7 +96,7 @@ p {
 
 }
 
-.article-title{
+.article_title{
   color: rgb(40, 40, 40);
 
 }
@@ -121,14 +123,12 @@ p {
   justify-content: space-between;
 
 
-
-
-  border: 1px solid red;
+  border: none;
 }
 
 .section_title{
   
-  border: 1px solid blue;
+  border: none;
   
 }
 
@@ -147,7 +147,7 @@ p {
 
 }
 
-.sub-title{
+.sub_title{
   margin: 20px 0 0 0;
   color: rgb(40, 40, 40);
 }
@@ -158,37 +158,49 @@ p {
 }
 
 .edit_button{
-  align-self: end;
-  padding: 10px;
+  width: auto;
   text-align: center;
-  width: 10em;
   border-radius: 10px;
+  padding: 1em 1em;
   background-color: #212121;
+  box-shadow: 0 8px 10px  #21212163;
+  
+  border: none;
+
 }
 
 .edit_button:hover{
-  padding: 10px;
-  width: 10em;
 
-  border-radius: 10px;
-  background-color: #212121;
+
+  background-color: #212121ed;
+  box-shadow: 0 4px 10px  #212121c7;
+}
+
+.article_list_head{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+
+  border: 1px solid red;
 }
 
 
 
-.upvote-button{
+.upvote_button{
   margin: 0 0 1rem 1rem;
   padding: 1em;
   border-radius: 10px;
 }
 
-.article-head{
+.article_head{
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
-.comment-form{
+.comment_form{
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -200,7 +212,7 @@ p {
   
 }
 
-.add-comment{
+.add_comment{
   display: flex;
   padding: 5px;
   width: 125px;
@@ -211,14 +223,14 @@ p {
 
 }
 
-.article-title-input{
+.article_title_input{
   margin-left: 1em;
   width: 30%;
   min-width: 200px;
 
 }
 
-.article-text-input{
+.article_text_input{
   margin-left: 1em;
   width: 90%;
 }
@@ -273,5 +285,8 @@ p {
   height: 150px;
   object-fit: cover;
   border-radius: 8px;
-  border: 2px solid red;
+  border: 1px solid rgba(255, 0, 13, 0.032);
+
+  box-shadow: 0 8px 8px rgba(0, 0, 255, 0.135);
 }
+

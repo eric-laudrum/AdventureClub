@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import  useUser  from '../use_user';
+import useUser from "../../hooks/useUser";
 
 
 export default function AddArticleForm({ articleName, onArticleUpdated }){

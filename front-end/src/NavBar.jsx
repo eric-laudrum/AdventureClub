@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { getAuth, signOut} from 'firebase/auth';
-import useUser from "./use_user";
+import useUser from "../hooks/useUser";
 import './App.css'
 
 export default function NavBar() {
@@ -28,7 +28,7 @@ export default function NavBar() {
                     <>
                     { user && (
                     <Link to={`/profile/${user.uid}`}>
-                        <li className='navLink'>
+                        <li className='nav_link'>
                             Logged in as { user.email }
                         </li>
                     </Link>

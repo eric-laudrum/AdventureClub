@@ -13,3 +13,14 @@ Currently, two official plugins are available:
 
 Imports
 npm install multer
+
+
+TODO:
+- Upcoming events
+    - descriptions / images
+    - sign up
+    - dates (start and end)
+    - linked maps
+- Recap
+    - recap of event with pictures
+    - thank you message / follow up

@@ -3,13 +3,15 @@ import ArticlesList from '../ArticlesList';
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useLoaderData } from 'react-router-dom';
+import useUser from '../../hooks/useUser';
 
 export default function ArticlesListPage(){
     
+    const { user } = useUser();
     const data = useLoaderData();
     console.log("FRONTEND RECEIVED DATA:", data);
     
-    const { articles } = useLoaderData()|| { articles: [] };
+    const { articles } = data || { articles: [] };
     
     return(
         <>
@@ -20,15 +22,11 @@ export default function ArticlesListPage(){
                 <button className="add_button">
                     <Link to="/add-article">+ article</Link>
                 </button>
-                
             </div>
             
         
-            <ArticlesList articles={ articles } />
-
+            <ArticlesList articles={ articles } user={ user }/>
         </div>
-        
-            
         </>
     );
 }

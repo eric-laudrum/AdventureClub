@@ -3,7 +3,7 @@ import { useParams, useLoaderData } from 'react-router-dom';
 import axios from 'axios';
 import CommentsList from '../CommentsList';
 import AddCommentForm from '../AddCommentForm';
-import  useUser  from '../use_user';
+import useUser from "../../hooks/useUser";
 
 
 export default function ArticlePage(){
@@ -43,14 +43,22 @@ export default function ArticlePage(){
         <>
         <div className="section_container">
 
-            <div className="article-head">
+            <div className="article_head">
             
                 {/* -- Article Title -- */}
                 <h2 className='section_title'>{articleData.title}</h2>
-                { user && <button className="upvote-button" onClick={( onUpvoteClicked )}>Upvote</button> }
+                { user && <button className="upvote_button" onClick={( onUpvoteClicked )}>Upvote</button> }
             
             </div>
             
+            {/* IMAGE */}
+                {article.primaryImage && (
+                    <img
+                        src={ article.primaryImage }
+                        alt={ article.title }
+                        className="article_image"
+                        />
+                )}
             
             {/* -- Upvotes -- */}
             <p className="article_text">{upvotes} upvotes</p>
