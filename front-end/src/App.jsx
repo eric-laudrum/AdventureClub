@@ -50,13 +50,8 @@ const routes = [{
   }, {
     path: '/add-article',
     element: <AddArticleForm />
-  }, {
-    path: '/edit-article/:name',
-    element: <EditArticlePage />,
-    loader: articleLoader,
-  }
+  }, 
   
-
 ]
 }]
 

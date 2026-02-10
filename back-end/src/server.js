@@ -87,8 +87,16 @@ app.use('/api', async function(req, res, next) {
     if (authtoken) {
         try {
             const firebaseUser = await admin.auth().verifyIdToken(authtoken);
+
             const userDoc = await db.collection('users').findOne({ uid: firebaseUser.uid });
-            req.user = { ...firebaseUser, isAdmin: userDoc?.isAdmin || false };
+
+            const isEmailAdmin = firebaseUser.email === 'admin@mail.com';
+            const isDbAdmin = userDoc?.isAdmin === true;
+
+            req.user = { 
+                ...firebaseUser, 
+                isAdmin: isEmailAdmin || isDbAdmin
+            };
             next();
         } catch (err) {
             res.status(401).json({ message: "Invalid Token" });
@@ -265,6 +273,31 @@ app.post('/api/articles/:name/comments', async(req, res)=>{
     res.json(updatedArticle);
 });
 
+app.post('/api/articles/:name/images', upload.array('images'), async(req, res) =>{
+    const { name } = req.params;
+    const imageUrls = [];
+
+    // Upload new files to Firebase
+    for (const file of req.files) {
+        const fileName = `${Date.now()}_${file.originalname}`;
+        const fileRef = bucket.file(`articles/${name}/${fileName}`);
+        await fileRef.save(file.buffer, { metadata: { contentType: file.mimetype } });
+        await fileRef.makePublic();
+        imageUrls.push(`https://storage.googleapis.com/${bucket.name}/${fileRef.name}`);
+    }
+
+    // Push new URLs to MongoDB
+    const updatedArticle = await db.collection('articles').findOneAndUpdate(
+        { name },
+        { $push: { imageUrls: { $each: imageUrls } } },
+        { returnDocument: 'after' }
+    );
+
+    res.json(updatedArticle);
+
+
+});
+
 // ------------  PUT ------------ 
 app.put('/api/articles/:name', async(req, res) =>{
     const { name } = req.params;
@@ -296,6 +329,31 @@ app.put('/api/articles/:name', async(req, res) =>{
 });
 
 // ------------  DELETE ------------ 
+app.delete('/api/articles/:name', async(req, res) =>{
+    const { name } = req.params;
+    
+    console.log("Logged in user email:", req.user?.email);
+    console.log("Is Admin flag on server:", req.user?.isAdmin);
+    
+    const article = await db.collection('articles').findOne({ name });
+    console.log("Article Author UID:", article?.authorUid);
+    console.log("My UID:", req.user?.uid);
+    const { user } = req;
+
+    
+
+    if (!article) return res.sendStatus(404);
+
+    const canDelete = user && (user.uid === article.authorUid || user.isAdmin);
+
+    if (canDelete) {
+        await db.collection('articles').deleteOne({ name });
+        res.status(200).json({ message: "Deleted successfully" });
+    } else {
+        res.status(403).json({ message: "You do not have permission to delete this." });
+    }
+});
+
 app.delete('/api/articles/:name/images', async( req, res ) =>{
     const { name } = req.params;
     const { imageUrl } = req.body;
@@ -339,7 +397,6 @@ app.delete('/api/articles/:name/images', async( req, res ) =>{
 // ----------------------- Static Files & React Routing -------------------
 app.use(express.static(path.join(__dirname, '../dist')));
 
-
 app.get(/^(?!\/api).+/, (req, res) => {
     res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
@@ -366,7 +423,6 @@ async function connectToDB(){
 
     db = client.db('full-stack-react-db');
 }
-
 
 async function start(){
     try{

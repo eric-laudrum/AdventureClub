@@ -9,13 +9,15 @@ const useUser = () => {
     const [ user, setUser ] = useState( null );
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(getAuth(), function( user ){
-            setUser( user );
-            setIsLoading( false );
+        const unsubscribe = onAuthStateChanged(getAuth(), user => {
+            if (user) {
+                // Add this logic:
+                user.isAdmin = user.email === 'admin@mail.com'; 
+            }
+            setUser(user);
+            setIsLoading(false);
         });
-
         return unsubscribe;
-
     }, []);
 
     return { isLoading, user };

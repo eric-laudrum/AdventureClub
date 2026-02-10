@@ -1,5 +1,5 @@
 import {useState, useEffect } from 'react';
-import { useParams, useLoaderData } from 'react-router-dom';
+import { useParams, useLoaderData, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CommentsList from '../CommentsList';
 import AddCommentForm from '../AddCommentForm';
@@ -9,10 +9,21 @@ import useUser from "../../hooks/useUser";
 export default function ArticlePage(){
     const { name } = useParams();
     const { articleData } = useLoaderData();
-    const [upvotes, setUpvotes] = useState(articleData?.upvotes || 0);
-    const [comments, setComments] = useState(articleData?.comments || []);
+    const { user } = useUser();
+    const navigate = useNavigate();
 
-    const { isLoading, user } = useUser();
+    const [ upvotes, setUpvotes] = useState(articleData?.upvotes || 0);
+    const [ comments, setComments] = useState(articleData?.comments || []);
+    const [isEditing, setIsEditing] = useState(false);
+    const [articleText, setArticleText] = useState(articleData?.content?.[0] || "");
+    const [ imageToUpload, setImageToUpload ] = useState(null);
+
+    // Sync state when navigating
+    useEffect(() => {
+        setUpvotes(articleData?.upvotes || 0);
+        setComments(articleData?.comments || []);
+        setArticleText(articleData?.content?.[0] || "");
+    }, [articleData]);
 
  
     async function onUpvoteClicked(){
@@ -23,7 +34,7 @@ export default function ArticlePage(){
         setUpvotes(updatedArticleData.upvotes);
     }
 
-    async function onAddComment({nameText, commentText}){
+    async function onAddComment({ nameText, commentText }){
         const token = user && await user.getIdToken();
         const headers = token ? { authtoken: token } : {};
         const response = await axios.post('/api/articles/' + name + '/comments', {
@@ -34,54 +45,144 @@ export default function ArticlePage(){
         setComments(updatedArticleData.comments);
     }
 
-    useEffect(() => {
-    setUpvotes(articleData.upvotes);
-    setComments(articleData.comments);
-}, [articleData]);
+    async function onUploadImage(){
+        if( !imageToUpload ) return;
 
+        const token = await user.getIdToken();
+        const formData = new FormData();
+        formData.append('images', imageToUpload);
 
-    return(
-        <>
-        <div className="section_container">
+        try{
+            const response = await axios.post(`/api/articles/${name}/images`, formData, {
+                headers:{
+                    'Content-Type': 'multipart/form-data',
+                    authtoken: token
+                }
+            });
 
-            <div className="article_head">
-            
-                {/* -- Article Title -- */}
-                <h2 className='section_title'>{articleData.title}</h2>
-                { user && <button className="upvote_button" onClick={( onUpvoteClicked )}>Upvote</button> }
-            
-            </div>
-            
-            {/* IMAGE */}
-                {articleData.primaryImage && (
-                    <img
-                        src={ articleData.primaryImage }
-                        alt={ articleData.title }
-                        className="article_image"
-                        />
-                )}
-            
-            {/* -- Upvotes -- */}
-            <p className="article_text">{upvotes} upvotes</p>
-            
-            {/* -- Article Text -- */}
-            {articleData.content.map((p, i) => <p key={i} className="article_text">{p}</p> )}
-            
-
-            {/* -- Comment Form -- */}
-            {user 
-                ? <AddCommentForm onAddComment={onAddComment}/>
-                : <p>Log in to add a comment </p> 
+            if (response.data.imageUrls) {
+                window.location.reload(); 
             }
 
-            {/* -- Comments -- */}
-            <CommentsList comments={comments}/>
+            alert('Image uploaded successfully.');
+            setImageToUpload( null ); // Clear input
+        } catch( err ){
+            alert("Error: Image upload failed.")
+        }
+       
+    }
 
+    async function onSaveClicked() {
+        const token = await user.getIdToken();
+        try {
+            const response = await axios.put(`/api/articles/${name}`, { // Define response here
+                articleText: articleText
+            }, { headers: { authtoken: token } });
+            
+            setArticleText(response.data.content[0]); 
+            setIsEditing(false);
+            alert("Article saved successfully");
+        } catch (err) {
+            alert("Failed to save article");
+        }
+    }
+
+    async function onDeleteArticle() {
+
+        if (user.uid !== articleData.authorUid && !user.isAdmin) {
+            alert("You don't have permission to delete this.");
+            return;
+        }
+
+        const confirmDelete = window.confirm("PERMANENTLY delete this entire article?");
+        if (!confirmDelete) return;
+
+        const token = await user.getIdToken();
+        try {
+            // You'll need to ensure this route exists in your Express backend
+            await axios.delete(`/api/articles/${name}`, {
+                headers: { authtoken: token }
+            });
+            navigate('/articles'); // Send user back to list
+        } catch (err) {
+            alert("Error deleting article");
+        }
+    }
+
+    return(
+        <div className="section_container">
+            <div className="article_head">
+                {/* -- ARTICLE TITLE Title -- */}
+                <h2 className='section_title'>{articleData.title}</h2>
+                
+                {/* ADMIN CONTROLS */}
+                {user && (user.uid === articleData.authorUid || user.isAdmin) && (
+                <div className="admin_controls">
+                    {!isEditing ? (
+                        <button onClick={() => setIsEditing(true)}>Edit Article</button>
+                    ) : (
+                        <>
+                            <button onClick={onSaveClicked} style={{backgroundColor: 'green', color: 'white'}}>Save</button>
+                            <button onClick={() => setIsEditing(false)}>Cancel</button>
+                            <button onClick={onDeleteArticle} style={{backgroundColor: 'red', color: 'white'}}>Delete Article</button>
+                        </>
+                    )}
+                </div>
+            )}
+            </div>
+            
+            {/* IMAGE SECTION */}
+            <div className="images_container">
+                {articleData.imageUrls?.map((url, i) => (
+                    <div key={i} className="image_edit_wrapper">
+                        <img src={url} className="article_image" alt="content" />
+                        {isEditing && (
+                            <button onClick={() => handleDeleteImage(url)} className="del_img_btn">Delete Photo</button>
+                        )}
+                    </div>
+                ))}
+                
+                {/* UPLOAD NEW PHOTO (Only in Edit Mode) */}
+                {isEditing && (
+                    <div className="upload_section" style={{marginTop: '20px', border: '1px dashed #ccc', padding: '10px'}}>
+                        <h4>Add New Photo</h4>
+                        <input type="file" onChange={e => setImageToUpload(e.target.files[0])} />
+                        <button onClick={onUploadImage} disabled={!imageToUpload}>Upload</button>
+                    </div>
+                )}
+            </div>
+
+            {/* CONTENT SECTION */}
+            {isEditing ? (
+                <textarea 
+                    className="edit_textarea"
+                    value={articleText}
+                    onChange={e => setArticleText(e.target.value)}
+                    rows="15"
+                    style={{ width: '100%', marginTop: '20px' }}
+                />
+            ) : (
+                articleData.content.map((p, i) => <p key={i} className="article_text">{p}</p>)
+            )}
+            
+            {/* INTERACTION SECTION (Only visible when NOT editing) */}
+            {!isEditing && (
+                <>
+                    <div className="upvote_section">
+                        <p className="article_text">{upvotes} upvotes</p>
+                        {user && <button className="upvote_button" onClick={onUpvoteClicked}>Upvote</button>}
+                    </div>
+
+                    <hr />
+                    
+                    {user 
+                        ? <AddCommentForm onAddComment={onAddComment}/>
+                        : <p>Log in to add a comment </p> 
+                    }
+                    <CommentsList comments={comments}/>
+                </>
+            )}
         </div>
-        
-        </>
-
-        
     );
 }
 

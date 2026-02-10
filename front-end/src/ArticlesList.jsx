@@ -9,9 +9,11 @@ export default function ArticlesList({ articles, user }){
     return (
         <div className="article_list">
             {articles.map((article, index) => (
-
-                <div className="article_pane">
-
+                <div className="article_pane" key={`${article._id}-${index}`}>
+                    
+                    {/* debugging */}
+                    {console.log(`Article: ${article.title}, Author: ${article.authorUid}, Me: ${user?.uid}`)}
+                    
                     <div className="article_list_head">
                         <Link 
                             key={ article._id || `${ article.name }${ index }`} 
@@ -20,15 +22,6 @@ export default function ArticlesList({ articles, user }){
                             {/* TITLE */}
                             <h3 className="article_title">{ article.title }</h3>
                         </Link>
-
-                        {/* EDIT BUTTON - Admin/Author only */}
-                        { user && (user.uid === article.authorUid || user.isAdmin) && (
-                            <Link to={'/edit-article/' + article.name }>
-                                <button className="edit_button">Edit</button>
-                            </Link>
-                        )}
-
-
                     </div>
 
 
