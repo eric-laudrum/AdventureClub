@@ -25,6 +25,8 @@ export default function ArticlePage(){
         setArticleText(articleData?.content?.[0] || "");
     }, [articleData]);
 
+    console.log("Current Article Data:", articleData);
+
  
     async function onUpvoteClicked(){
         const token = user && await user.getIdToken();
@@ -109,6 +111,20 @@ export default function ArticlePage(){
         }
     }
 
+    async function onSignupClicked() {
+        const token = await user.getIdToken();
+        try {
+            const response = await axios.post(`/api/articles/${name}/signup`, null, {
+                headers: { authtoken: token }
+            });
+            
+            alert("Success! You are signed up.");
+            window.location.reload(); 
+        } catch (err) {
+            alert("Failed to sign up for event.");
+        }
+    }
+
     return(
         <div className="section_container">
             <div className="article_head">
@@ -164,6 +180,8 @@ export default function ArticlePage(){
             ) : (
                 articleData.content.map((p, i) => <p key={i} className="article_text">{p}</p>)
             )}
+
+
             
             {/* INTERACTION SECTION (Only visible when NOT editing) */}
             {!isEditing && (
@@ -173,7 +191,26 @@ export default function ArticlePage(){
                         {user && <button className="upvote_button" onClick={onUpvoteClicked}>Upvote</button>}
                     </div>
 
-                    <hr />
+                    {/*{(articleData.type === 'event' || articleData.location) && (*/}
+                    {true && (
+                        <div className="event_signup_container" style={{ border: '1px solid #ddd', padding: '20px', margin: '20px 0' }}>
+                            <h3>Event Details</h3>
+                            <p><strong>Starts:</strong> {articleData.eventDate ? new Date(articleData.eventDate).toLocaleString() : 'TBD'}</p>
+                            <p><strong>Location:</strong> {articleData.location}</p>
+
+                            {user ? (
+                                <button 
+                                    onClick={onSignupClicked}
+                                    disabled={articleData.attendees?.includes(user.uid)}
+                                    className="signup_btn"
+                                >
+                                    {articleData.attendees?.includes(user.uid) ? "You're attending" : "Sign Up"}
+                                </button>
+                            ) : (
+                                <p>Log in to sign up for this event.</p>
+                            )}
+                        </div>
+                    )}
                     
                     {user 
                         ? <AddCommentForm onAddComment={onAddComment}/>
@@ -182,6 +219,11 @@ export default function ArticlePage(){
                     <CommentsList comments={comments}/>
                 </>
             )}
+
+
+    
+
+
         </div>
     );
 }

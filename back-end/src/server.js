@@ -169,15 +169,11 @@ app.get('/api/articles/:name', async(req, res) =>{
 // ------------  POST ------------ 
 // Create a new article
 app.post('/api/articles', upload.array('images'), async(req, res) => {
-    
 
-    console.log("\n\n/////////////////Attempt to Create New Article/////////////////");
-    console.log("User from Token:", req.user.email);
-    console.log("Data received:", req.body);
-    console.log("Files received:", req.files);
-    
     // Destructure info from frontend
-    const { articleTitle, articleText } = req.body;
+    const { articleTitle, articleText, type, eventDate, location } = req.body;
+    
+    console.log("Backend received type:", type);
     const { email, uid } = req.user;
 
     // Verify article title
@@ -214,18 +210,19 @@ app.post('/api/articles', upload.array('images'), async(req, res) => {
 
     try {
         const newArticle = {
-            name: name,
+            name,
             title: articleTitle,
-            content: [ articleText ],
+            content: [articleText],
+            type: type,
+            eventDate: eventDate || null, 
+            location: location || null,
+            attendees: [],          
+            authorUid: uid, 
             upvotes: 0,
-            upvoteIds: [],
             comments: [],
-            authorUid: uid,
-            authorEmail: email,
             imageUrls: imageUrls,
             primaryImage: primaryImage
-
-        };
+};
 
         const result = await db.collection('articles').insertOne(newArticle);
         res.status(201).json(newArticle); 
@@ -298,6 +295,23 @@ app.post('/api/articles/:name/images', upload.array('images'), async(req, res) =
 
 });
 
+// Event sign up
+app.post('/api/articles/:name/signup', async (req, res) => {
+    const { name } = req.params;
+    const { uid } = req.user;
+
+    const updatedArticle = await db.collection('articles').findOneAndUpdate(
+        { name },
+        { $addToSet: { attendees: uid } },
+        { returnDocument: 'after' }
+    );
+
+    if (!updatedArticle) 
+        return res.status(404).json({ message: "Event not found" });
+
+    res.json(updatedArticle);
+});
+
 // ------------  PUT ------------ 
 app.put('/api/articles/:name', async(req, res) =>{
     const { name } = req.params;
@@ -331,7 +345,7 @@ app.put('/api/articles/:name', async(req, res) =>{
 // ------------  DELETE ------------ 
 app.delete('/api/articles/:name', async(req, res) =>{
     const { name } = req.params;
-    
+
     console.log("Logged in user email:", req.user?.email);
     console.log("Is Admin flag on server:", req.user?.isAdmin);
     

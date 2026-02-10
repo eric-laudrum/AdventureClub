@@ -22,6 +22,10 @@ export default function ArticlesList({ articles, user }){
                             {/* TITLE */}
                             <h3 className="article_title">{ article.title }</h3>
                         </Link>
+
+                        { article.type === 'event' &&(
+                            <h2>This is an event</h2>
+                        )}
                     </div>
 
 

@@ -9,6 +9,11 @@ export default function AddArticleForm({ articleName, onArticleUpdated }){
     const [ titleText, setArticleTitleText ] = useState('');
     const [ articleText, setArticleText ] = useState('');
     const [ files, setFiles ] = useState([]);
+
+    const [isEvent, setIsEvent] = useState(false);
+    const [eventDate, setEventDate] = useState('');
+    const [location, setLocation] = useState('');
+
     const { user } = useUser();
 
 
@@ -31,6 +36,9 @@ export default function AddArticleForm({ articleName, onArticleUpdated }){
             const formData = new FormData();
             formData.append('articleTitle', titleText);
             formData.append('articleText', articleText);
+            formData.append('type', isEvent ? 'event' : 'article');
+            formData.append('eventDate', eventDate);
+            formData.append('location', location);
 
             // Add files
             for( let i = 0; i < files.length; i++){
@@ -56,6 +64,9 @@ export default function AddArticleForm({ articleName, onArticleUpdated }){
             setArticleTitleText('');
             setArticleText('');
             setFiles([]);
+            setIsEvent(false);
+            setEventDate('');
+            setLocation('');
 
 
         } catch( error ){
@@ -68,6 +79,33 @@ export default function AddArticleForm({ articleName, onArticleUpdated }){
         <div className="add_article_container">
 
             <h3>New Article</h3>
+
+            <label>
+                <input 
+                    type="checkbox" 
+                    checked={isEvent} 
+                    onChange={(e) => setIsEvent(e.target.checked)} 
+                /> 
+                Is this an Event?
+            </label>
+
+            {isEvent && (
+                <div className="event-fields">
+                    <input 
+                        type="datetime-local" 
+                        value={eventDate} 
+                        onChange={(e) => setEventDate(e.target.value)} 
+                    />
+                    <input 
+                        type="text" 
+                        placeholder="Location (or link)" 
+                        value={location} 
+                        onChange={(e) => setLocation(e.target.value)} 
+                    />
+                </div>
+            )}
+
+
             <div className="new_article_form">
 
                 {/* --- TITLE --- */}
