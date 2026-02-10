@@ -13,6 +13,7 @@ import CreateAccountPage from './pages/CreateAccountPage';
 import Header from './Header'
 import ProfilePage from './pages/ProfilePage';
 import AddArticleForm from './pages/AddArticleForm';
+import EditArticlePage from './pages/EditArticlePage';
 
 const routes = [{
   path: '/',
@@ -49,6 +50,10 @@ const routes = [{
   }, {
     path: '/add-article',
     element: <AddArticleForm />
+  }, {
+    path: '/edit-article/:name',
+    element: <EditArticlePage />,
+    loader: articleLoader,
   }
   
 
@@ -61,7 +66,7 @@ function App() {
   return (
     <>
     <div className="main_body">
-      <RouterProvider router={router} />
+      <RouterProvider router={router} fallbackElement={<div>Loading...</div>} />
 
     </div>
       

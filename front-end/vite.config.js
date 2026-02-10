@@ -8,8 +8,7 @@ export default defineConfig({
       '/api':{
         target: 'https://tqzqkd94-8000.use.devtunnels.ms',
         changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '/api')
+        secure: false
       }
     }
   }

@@ -1,4 +1,4 @@
-import {useState } from 'react';
+import {useState, useEffect } from 'react';
 import { useParams, useLoaderData } from 'react-router-dom';
 import axios from 'axios';
 import CommentsList from '../CommentsList';
@@ -9,12 +9,8 @@ import useUser from "../../hooks/useUser";
 export default function ArticlePage(){
     const { name } = useParams();
     const { articleData } = useLoaderData();
-
-    console.log("\nDATA SOURCE: ", articleData);
-
-
-    const[upvotes, setUpvotes] = useState(articleData.upvotes);
-    const [comments, setComments] = useState(articleData.comments);
+    const [upvotes, setUpvotes] = useState(articleData?.upvotes || 0);
+    const [comments, setComments] = useState(articleData?.comments || []);
 
     const { isLoading, user } = useUser();
 
@@ -38,6 +34,11 @@ export default function ArticlePage(){
         setComments(updatedArticleData.comments);
     }
 
+    useEffect(() => {
+    setUpvotes(articleData.upvotes);
+    setComments(articleData.comments);
+}, [articleData]);
+
 
     return(
         <>
@@ -52,10 +53,10 @@ export default function ArticlePage(){
             </div>
             
             {/* IMAGE */}
-                {article.primaryImage && (
+                {articleData.primaryImage && (
                     <img
-                        src={ article.primaryImage }
-                        alt={ article.title }
+                        src={ articleData.primaryImage }
+                        alt={ articleData.title }
                         className="article_image"
                         />
                 )}
