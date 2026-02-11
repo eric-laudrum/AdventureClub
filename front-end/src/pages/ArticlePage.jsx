@@ -183,7 +183,7 @@ export default function ArticlePage(){
 
 
             
-            {/* INTERACTION SECTION (Only visible when NOT editing) */}
+            {/* Main view - Upvote & Comment */}
             {!isEditing && (
                 <>
                     <div className="upvote_section">

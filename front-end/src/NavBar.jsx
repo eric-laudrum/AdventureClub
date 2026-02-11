@@ -15,7 +15,6 @@ export default function NavBar() {
             <ul className='nav_links'>
 
                 <li className='nav_link'>
-                
                     <Link to='/'>Home</Link>
                 </li>
                 <li className='nav_link'>
@@ -34,7 +33,7 @@ export default function NavBar() {
                     { user && (
                     <Link to={`/profile/${user.uid}`}>
                         <li className='nav_link'>
-                            Logged in as { user.email }
+                            { user.email }
                         </li>
                     </Link>
 
@@ -43,7 +42,8 @@ export default function NavBar() {
                     <li>
                         { user 
                         ? <button onClick={()=> signOut(getAuth())}>Sign Out</button>
-                        : <button onClick={()=> navigate('/login')}>Sign In</button> }
+                        : <button className='sign_button'
+                             onClick={()=> navigate('/login')}>Sign In</button> }
                     </li>
                     </>
                 ) }

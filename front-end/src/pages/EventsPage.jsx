@@ -27,6 +27,8 @@ export default function EventsPage() {
     const prevMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
     const nextMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
 
+    const goToToday = () => { setCurrentDate(new Date()); };
+
     const daysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
     const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
 
@@ -90,9 +92,14 @@ export default function EventsPage() {
             )}
 
             <div className="calendar_header">
-                <button onClick={prevMonth}>&lt;</button>
-                <h2>{currentDate.toLocaleString('default', { month: 'long' })} {currentDate.getFullYear()}</h2>
-                <button onClick={nextMonth}>&gt;</button>
+                <div className="calendar_nav_controls">
+                    <button onClick={prevMonth}>&lt;</button>
+                    <button onClick={goToToday} className="today_button">Today</button>
+                    <button onClick={nextMonth}>&gt;</button>
+                </div>
+                <h2>
+                    {currentDate.toLocaleString('default', { month: 'long' })} {currentDate.getFullYear()}
+                </h2>
             </div>
             <div className="calendar_grid">
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
