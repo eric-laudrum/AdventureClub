@@ -83,7 +83,6 @@ app.use('/api', async function(req, res, next) {
     if (isPublicGet) {
         return next();
     }
-
     if (authtoken) {
         try {
             const firebaseUser = await admin.auth().verifyIdToken(authtoken);
@@ -130,12 +129,26 @@ app.get('/api/profile/:uid', async (req, res) => {
         
         const user = await db.collection('users').findOne({ uid: uid });
 
-        if (user) {
-            res.json(user);
-        } else {
-            res.status(404).json({ message: "User not found in database" });
+        const attendingEvents = await db.collection('articles')
+            .find({ attendees: uid })
+            .toArray();
+
+        if ( !user ) {
+            return res.json({
+                uid,
+                email: req.user.email, // from auth mid
+                bio: "",
+                attendingEvents: attendingEvents || []
+            });
         }
+
+        res.json({
+            ...user,
+            attendingEvents
+        });
+        
     } catch (err) {
+        console.error("Profile Route Error:", err);
         res.status(500).json({ message: "Server error", error: err.message });
     }
 });

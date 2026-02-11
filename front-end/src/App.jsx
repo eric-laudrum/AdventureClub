@@ -13,7 +13,7 @@ import CreateAccountPage from './pages/CreateAccountPage';
 import Header from './Header'
 import ProfilePage from './pages/ProfilePage';
 import AddArticleForm from './pages/AddArticleForm';
-import EditArticlePage from './pages/EditArticlePage';
+import EventsPage from './pages/EventsPage';
 
 const routes = [{
   path: '/',
@@ -50,7 +50,10 @@ const routes = [{
   }, {
     path: '/add-article',
     element: <AddArticleForm />
-  }, 
+  }, {
+    path: '/events',
+    element: <EventsPage />
+  }
   
 ]
 }]

@@ -85,7 +85,7 @@ p {
   padding: 1em;
   margin-bottom: 1em;
   box-shadow:  0 5px 5px #adadad64;
-  border: 2px solid red;
+
 }
 
 .article_pane:nth-child(odd){
@@ -183,7 +183,7 @@ p {
   width: 100%;
   align-items: center;
 
-  border: 1px solid red;
+
 }
 
 

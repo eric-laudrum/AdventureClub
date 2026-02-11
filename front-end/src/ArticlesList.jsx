@@ -8,46 +8,21 @@ export default function ArticlesList({ articles, user }){
 
     return (
         <div className="article_list">
-            {articles.map((article, index) => (
-                <div className="article_pane" key={`${article._id}-${index}`}>
-                    
-                    {/* debugging */}
-                    {console.log(`Article: ${article.title}, Author: ${article.authorUid}, Me: ${user?.uid}`)}
-                    
-                    <div className="article_list_head">
-                        <Link 
-                            key={ article._id || `${ article.name }${ index }`} 
-                            to={'/articles/' + article.name }>
-
-                            {/* TITLE */}
-                            <h3 className="article_title">{ article.title }</h3>
-                        </Link>
-
-                        { article.type === 'event' &&(
-                            <h2>This is an event</h2>
+            {articles.map(article => (
+                <div key={article._id} className="article_pane">
+                    <Link to={`/articles/${article.name}`}>
+                        <h3 className='article_title'>{article.title}</h3>
+                        
+                        {/* Show extra info only if it's an event */}
+                        {article.type === 'event' && (
+                            <div style={{ color: '#666', fontSize: '0.9rem' }}>
+                                <p>📍 {article.location}</p>
+                                <p>📅 {article.eventDate ? new Date(article.eventDate).toLocaleDateString() : 'TBD'}</p>
+                            </div>
                         )}
-                    </div>
-
-
-                    {/* IMAGE */}
-                            {article.primaryImage && (
-                                <img
-                                    src={ article.primaryImage }
-                                    alt={ article.title }
-                                    className="article_image"
-                                />
-                            )}
-
-
-                    {/* MAIN TEXT */}
-                    <p className="article_text">
-                            {article.content && article.content[0] 
-                                ? article.content[0].substring(0, 150) 
-                                : "No content available"}
-                    </p>
-                
+                    </Link>
+                    <p>{article.content[0].substring(0, 150)}...</p>
                 </div>
-                
             ))}
         </div>
     );

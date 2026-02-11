@@ -24,6 +24,11 @@ export default function NavBar() {
                 <li className='nav_link'>
                      <Link to='/articles'>Articles</Link>
                 </li>
+                <li className='nav_link'>
+                     <Link to='/events'>Events</Link>
+                </li>
+
+
                 { isLoading ? <li>Loading...</li> :(
                     <>
                     { user && (
