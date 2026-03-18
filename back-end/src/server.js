@@ -148,7 +148,7 @@ app.get('/api/profile/:uid', async (req, res) => {
         });
         
     } catch (err) {
-        console.error("Profile Route Error:", err);
+        console.error("Profile Route Error:", err );
         res.status(500).json({ message: "Server error", error: err.message });
     }
 });

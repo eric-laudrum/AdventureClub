@@ -1,6 +1,19 @@
+:root {
+  --primary: rgb(27, 33, 1);; 
+  --primary-light: #489f3e25;
+  --text-dark: rgb(40, 40, 40);
+  --header-height: 6rem;
+  --border-radius: 12px;
+}
+
 *{
   box-sizing: border-box;  
   text-align: start;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
 }
 
 
@@ -31,50 +44,68 @@ a {
 
 
 .main_body{
-    padding: 0 5% 20px 5%;
+    padding: 0;
 }
 
 /* /\/\/\/\/\/\/\/\ Header /\/\/\/\/\/\/\/\ */
-.header_section{
-  text-align: center;
-  align-items: center;
-  margin-bottom: 20px;
-  display: flex;
-  flex-direction: horizontal;
-
+.header_section {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: white;
+  width: 100%;
 }
 
+
 .header_title{
+  display: flex;
+  top: 0;
+  margin: 0;
+  justify-content: center;
+  align-items: center;
   font-size: 2.2em;
   line-height: 1.1;
-  color: rgb(40, 40, 40);
+  color: white;
+  width: 100%;
+  
+  background-color: var(--primary);
+  height: 6rem;
+  padding: 3.5rem;
+  font-size: 4rem;
+  
 
 }
 
 /* /\/\/\/\/\/\/\/\ Navigation Bar /\/\/\/\/\/\/\/\ */
 .nav_bar{
+  position: sticky;
+  top: 200px;
+
+
   display: flex;
+  align-items: center;
 
   width: 100%;
-  height: auto;
 
-  justify-content: center;
-  justify-items: center;
-  align-items: center;
-  align-content: center;
-  text-align: center;
-
-  margin-right: -40px;
-
-  background-color: #489f3e25 ; /*Green*/
-  padding: 1em;
+  border-bottom: 1px solid var(--primary);
+  width: 100%;
     
 }
+
+.nav_link{
+  color: var(--primary);
+
+}
+
+.nav_link:hover{
+  font-weight: bold;
+}
+
 
 .sign_button{
   padding: 0.75rem;
   background-color: white;
-  color: black;
+  color: var(--primary);
   border-radius: 8px;
   border: none;
   box-shadow: 0 1px 5px black;

@@ -14,18 +14,24 @@ export default function NavBar() {
 
             <ul className='nav_links'>
 
-                <li className='nav_link'>
-                    <Link to='/'>Home</Link>
+                <li >
+                    <Link to='/' className='nav_link'>Home</Link>
                 </li>
-                <li className='nav_link'>
-                     <Link to='/about'>About</Link>
+
+                <li>
+                     <Link to='/about' className='nav_link'>About</Link>
                 </li>
-                <li className='nav_link'>
-                     <Link to='/articles'>Articles</Link>
+
+                <li>
+                     <Link to='/articles' className='nav_link'>Articles</Link>
                 </li>
-                <li className='nav_link'>
-                     <Link to='/events'>Events</Link>
+
+                <li>
+                     <Link to='/events' className='nav_link'>Events</Link>
                 </li>
+
+
+
 
 
                 { isLoading ? <li>Loading...</li> :(
