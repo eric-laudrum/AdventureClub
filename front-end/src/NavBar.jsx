@@ -10,29 +10,33 @@ export default function NavBar() {
     const navigate = useNavigate();
 
     return(
-        <nav className='nav_bar'>
+        <nav className='nav-bar'>
 
-            <ul className='nav_links'>
+            <ul className='nav-links'>
 
-                <li >
-                    <Link to='/' className='nav_link'>Home</Link>
+                <li className='nav-link'>
+                    <Link to='/' className='link'>Home</Link>
                 </li>
 
-                <li>
-                     <Link to='/about' className='nav_link'>About</Link>
+                <li className='nav-link'>
+                    <Link to='/' className='link'>About</Link>
                 </li>
 
-                <li>
-                     <Link to='/articles' className='nav_link'>Articles</Link>
+                <li className='nav-link'>
+                    <Link to='/' className='link'>Articles</Link>
                 </li>
 
-                <li>
-                     <Link to='/events' className='nav_link'>Events</Link>
+                <li className='nav-link'>
+                    <Link to='/' className='link'>Events</Link>
+                </li>
+
+                <li className='nav-link'>
+                    <Link to='/' className='link'>Contact</Link>
                 </li>
 
 
 
-
+{/* 
 
                 { isLoading ? <li>Loading...</li> :(
                     <>
@@ -54,7 +58,7 @@ export default function NavBar() {
                     </>
                 ) }
                 
-
+*/}
             </ul>
         </nav>
     )
