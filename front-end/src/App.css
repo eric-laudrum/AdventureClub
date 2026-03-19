@@ -1,3 +1,11 @@
+html, body, #root {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  display: block !important; /* Forces it out of any flex-centering layout */
+}
+
 :root {
   --primary: rgb(64, 61, 24); 
   --primary-light: #675f33;
@@ -8,7 +16,10 @@
 }
 
 #root {
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  max-width: none;
   text-align: center;
 }
 
@@ -20,6 +31,8 @@
 html, body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  overflow-x: hidden;
 }
 
 ul{
@@ -40,27 +53,66 @@ a {
 
 /* /\/\/\/\/\/\/\/\ Header /\/\/\/\/\/\/\/\ */
 .header_section {
-  display: flex;
-  flex-direction: column;
-
   position: sticky;
-  top: 0;
-  z-index: 1000;
-  background-color: var(--primary);
-
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: var(--primary);
+    position: relative;
 }
 
 .header-img-container{
   display: flex;
   width: 100%;
   justify-content: center;
-
+  background-color: var(--primary);
 }
 
 .header-img{
-  flex-shrink: 0;
+  display: block;
   height: 20vh;
+  width: auto;
+  max-width: 100%;
+}
 
+.account-container {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    z-index: 1001; /* Stay above the logo/nav */
+}
+
+.account-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.account-icon-link {
+    color: white;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.2s;
+}
+
+.account-icon-link:hover {
+    opacity: 0.8;
+}
+
+.sign-out-link {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.sign-out-link:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 

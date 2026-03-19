@@ -33,32 +33,6 @@ export default function NavBar() {
                 <li className='nav-link'>
                     <Link to='/' className='link'>Contact</Link>
                 </li>
-
-
-
-{/* 
-
-                { isLoading ? <li>Loading...</li> :(
-                    <>
-                    { user && (
-                    <Link to={`/profile/${user.uid}`}>
-                        <li className='nav_link'>
-                            { user.email }
-                        </li>
-                    </Link>
-
-
-                    )}
-                    <li>
-                        { user 
-                        ? <button onClick={()=> signOut(getAuth())}>Sign Out</button>
-                        : <button className='sign_button'
-                             onClick={()=> navigate('/login')}>Sign In</button> }
-                    </li>
-                    </>
-                ) }
-                
-*/}
             </ul>
         </nav>
     )
