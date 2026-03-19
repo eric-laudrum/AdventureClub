@@ -7,6 +7,7 @@ import path from 'path';
 import  { fileURLToPath }  from 'url';
 import cors from 'cors';
 import multer from 'multer'
+import { getDownloadURL } from 'firebase-admin/storage';
 
 // Handle files with Multer temporarily before Firebase
 const storage = multer.memoryStorage();
@@ -31,7 +32,10 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-    origin: 'https://j6t98d2t-5173.use.devtunnels.ms',
+    origin: [
+        'http://localhost:5173', 
+        'https://j6t98d2t-5173.use.devtunnels.ms'
+    ],
     credentials: true,
 }))
 
@@ -183,45 +187,50 @@ app.get('/api/articles/:name', async(req, res) =>{
 // Create a new article
 app.post('/api/articles', upload.array('images'), async(req, res) => {
 
-    // Destructure info from frontend
-    const { articleTitle, articleText, type, eventDate, location } = req.body;
-    
-    console.log("Backend received type:", type);
-    const { email, uid } = req.user;
-
-    // Verify article title
-    if(!articleTitle){
-        return res.status(400).json({ message: "Error: Article title is required"});
-    }
-
-    // Url friendly article name
-    const name = articleTitle.toLowerCase().split(' ').join('-');
-    const imageUrls = [];
-
-    // Debugging log
-    console.log("REQUEST REACHED SERVER: ", req.body);
-
-    // Upload files to Firebase
-    if( req.files ){
-        for( const file of req.files ){
-            const fileName = `${Date.now()}_${file.originalname}`;
-            const fileRef = bucket.file(`articles/${name}/${fileName}`);
-
-            await fileRef.save(file.buffer, {
-                metadata: { contentType: file.mimetype },
-            });
-
-            await fileRef.makePublic();
-
-            const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileRef.name}`;
-            imageUrls.push( publicUrl )
-        }
-    }
-
-    // Set Primary image & default to 1st
-    const primaryImage = imageUrls.length > 0 ? imageUrls[0]: null;
-
     try {
+        if (!req.user) {
+            return res.status(401).json({ message: "Unauthorized: No user found" });
+        }
+
+        // Destructure info from frontend
+        const { articleTitle, articleText, type, eventDate, location } = req.body;
+        
+        console.log("Backend received type:", type);
+        const { uid } = req.user;
+
+        // Verify article title
+        if(!articleTitle){
+            return res.status(400).json({ message: "Error: Article title is required"});
+        }
+
+        // Url friendly article name
+        const name = articleTitle.toLowerCase().split(' ').join('-');
+        const imageUrls = [];
+
+        // Debugging log
+        console.log("REQUEST REACHED SERVER: ", req.body);
+
+        // Upload files to Firebase
+        if( req.files ){
+            for( const file of req.files ){
+                const fileName = `${Date.now()}_${file.originalname}`;
+                const fileRef = bucket.file(`articles/${name}/${fileName}`);
+
+                await fileRef.save(file.buffer, {
+                    metadata: { contentType: file.mimetype },
+                });
+
+                await fileRef.makePublic();
+
+                const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileRef.name}`;
+                imageUrls.push( publicUrl )
+            }
+        }
+    
+
+        // Set Primary image & default to 1st
+        const primaryImage = imageUrls.length > 0 ? imageUrls[0]: null;
+
         const newArticle = {
             name,
             title: articleTitle,
@@ -235,14 +244,17 @@ app.post('/api/articles', upload.array('images'), async(req, res) => {
             comments: [],
             imageUrls: imageUrls,
             primaryImage: primaryImage
-};
+        };
 
         const result = await db.collection('articles').insertOne(newArticle);
         res.status(201).json(newArticle); 
         
-    } catch(err) {
-        console.error("Critical DB Insert Error: ", err);
-        res.status(500).json({ message: "Error saving article", error: err.message });
+   } catch (err) {
+        console.error("POST /api/articles Error: ", err);
+        res.status(500).json({ 
+            message: "Server error while creating article", 
+            error: err.message 
+        });
     }
 });
 

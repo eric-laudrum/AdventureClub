@@ -5,8 +5,6 @@ import useUser from "../hooks/useUser";
 import './App.css'
 
 export default function NavBar() {
-    const { isLoading, user } = useUser();
-
     const navigate = useNavigate();
 
     return(
