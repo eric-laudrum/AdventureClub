@@ -31,7 +31,7 @@ const app = express();
 app.use(express.json());
 
 app.use(cors({
-    origin: 'https://tqzqkd94-5173.use.devtunnels.ms',
+    origin: 'https://j6t98d2t-5173.use.devtunnels.ms',
     credentials: true,
 }))
 

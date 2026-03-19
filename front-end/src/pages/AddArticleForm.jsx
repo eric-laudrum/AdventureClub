@@ -46,10 +46,11 @@ export default function AddArticleForm({ articleName, onArticleUpdated }){
             }
 
             // 
-            const response = await axios.post(`/api/articles`, formData, { 
-                headers:{
-                    authtoken: token,
-                    'Content-Type' : 'multipart/form-data'
+            // const response = await axios.post(`/api/articles`, formData, { 
+            const response = await axios.post('https://j6t98d2t-8000.use.devtunnels.ms/api/articles', formData, { 
+                headers: {
+                authtoken: token,
+                'Content-Type' : 'multipart/form-data'
                 } 
             });
             
