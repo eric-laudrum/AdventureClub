@@ -18,6 +18,7 @@ export default function AddArticleForm({ articleName, onArticleUpdated }){
 
 
     const submitArticle = async () => {
+        
         // Verify user - only users can submit articles
         if( !user ){
             console.log("Error: no user logged in");
