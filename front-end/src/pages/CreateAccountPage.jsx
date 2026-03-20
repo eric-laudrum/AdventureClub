@@ -34,34 +34,61 @@ export default function CreateAccountPage(){
         }
     }
 
-    return(
-        <>
-        <h1>Create Account</h1>
+    return (
 
-        {/* Error handling */}
-        { error && <p>{error}</p>}
+        <div className="section-container">
+            <div className="article-head">
+                <h1 className="section-title">Create Account</h1>
+            </div>
 
+            <div className="new-article-form">
+                {error && <p>{error}</p>}
 
-        <input 
-            placeholder="Email Address"
-            value={ email }
-            onChange={e => setEmail(e.target.value)} 
-        />
-        <input 
-            placeholder="Password"
-            type="password"
-            value={ password }
-            onChange={e => setPassword(e.target.value)} 
-        />
-        <input 
-            placeholder="Confirm Password"
-            type="password"
-            value={ confirmPassword }
-            onChange={e => setConfirmPassword(e.target.value)} 
-        />
-        <button onClick={ createAccount }>Create Account</button>
-        <Link to='/login'>Already have an account? Log in here!</Link>
+                <div className="input-field">
+                    <label>Email Address</label>
+                    <input 
+                        className="article-title-input"
+                        placeholder="your@email.com"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)} 
+                    />
+                </div>
 
-        </>
+                <div className="input-field">
+                    <label>Password</label>
+                    <input 
+                        className="article-title-input"
+                        placeholder="Minimum 6 characters"
+                        type="password"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)} 
+                    />
+                </div>
+
+                <div className="input-field">
+                    <label>Confirm Password</label>
+                    <input 
+                        className="article-title-input"
+                        placeholder="Re-type password"
+                        type="password"
+                        value={confirmPassword}
+                        onChange={e => setConfirmPassword(e.target.value)} 
+                    />
+                </div>
+
+                <button 
+                    className="edit-button" 
+                    onClick={createAccount}
+                >
+                    Create Account
+                </button>
+
+                <div>
+                    <Link to='/login' className="text-link">
+                        Already have an account? Log in here!
+                    </Link>
+                </div>
+            </div>
+        </div>
     );
 }
