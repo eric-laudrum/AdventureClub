@@ -17,8 +17,9 @@ export default function ContactPage() {
 
             <p className="article-text">
                 Have a question about the <strong>Trellis Sequencer</strong>, a music theory, 
-                or a coding project? Leave a message below.
+                or a coding project?
             </p>
+            <p>Leave a message below.</p>
 
             <form onSubmit={handleSubmit} className="new-article-form">
                 <div className="input-field">
