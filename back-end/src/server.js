@@ -112,6 +112,8 @@ app.use('/api', async function(req, res, next) {
 
 // ------------------------  Protected API Routes ------------------------
 
+app.use('/uploads', express.static('uploads'));
+
 // ------------  GET ------------ 
 // Edit article by name
 app.get('/api/edit-article/:name', async(req, res) =>{
@@ -211,19 +213,24 @@ app.post('/api/articles', upload.array('images'), async(req, res) => {
         console.log("REQUEST REACHED SERVER: ", req.body);
 
         // Upload files to Firebase
-        if( req.files ){
-            for( const file of req.files ){
-                const fileName = `${Date.now()}_${file.originalname}`;
-                const fileRef = bucket.file(`articles/${name}/${fileName}`);
+        if (req.files) {
+            for (const file of req.files) {
+            const fileName = `${Date.now()}_${file.originalname}`;
+            const fileRef = bucket.file(`articles/${name}/${fileName}`);
 
-                await fileRef.save(file.buffer, {
-                    metadata: { contentType: file.mimetype },
-                });
+            // Save the file
+            await fileRef.save(file.buffer, {
+                metadata: { contentType: file.mimetype },
+            });
 
-                const publicUrl = await getDownloadURL(fileRef); 
-                imageUrls.push(publicUrl);
-            }
+            // Make it public 
+            await fileRef.makePublic();
+
+            // Construct the URL
+            const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileRef.name}`;
+            imageUrls.push(publicUrl);
         }
+    }
     
 
         // Set Primary image & default to 1st
