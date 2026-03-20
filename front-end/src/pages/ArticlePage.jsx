@@ -126,14 +126,14 @@ export default function ArticlePage(){
     }
 
     return(
-        <div className="section_container">
-            <div className="article_head">
-                {/* -- ARTICLE TITLE Title -- */}
-                <h2 className='section_title'>{articleData.title}</h2>
+        <div className="section-container">
+            <div className="article-head">
+                {/* -- Article Title -- */}
+                <h2 className='section-title'>{articleData.title}</h2>
                 
                 {/* ADMIN CONTROLS */}
                 {user && (user.uid === articleData.authorUid || user.isAdmin) && (
-                <div className="admin_controls">
+                <div className="admin-controls">
                     {!isEditing ? (
                         <button onClick={() => setIsEditing(true)}>Edit Article</button>
                     ) : (
@@ -148,19 +148,19 @@ export default function ArticlePage(){
             </div>
             
             {/* IMAGE SECTION */}
-            <div className="images_container">
+            <div className="images-container">
                 {articleData.imageUrls?.map((url, i) => (
-                    <div key={i} className="image_edit_wrapper">
-                        <img src={url} className="article_image" alt="content" />
+                    <div key={i} className="image-edit-wrapper">
+                        <img src={url} className="article-image" alt="content" />
                         {isEditing && (
-                            <button onClick={() => handleDeleteImage(url)} className="del_img_btn">Delete Photo</button>
+                            <button onClick={() => handleDeleteImage(url)} className="del-img-btn">Delete Photo</button>
                         )}
                     </div>
                 ))}
                 
                 {/* UPLOAD NEW PHOTO (Only in Edit Mode) */}
                 {isEditing && (
-                    <div className="upload_section" style={{marginTop: '20px', border: '1px dashed #ccc', padding: '10px'}}>
+                    <div className="upload-section" style={{marginTop: '20px', border: '1px dashed #ccc', padding: '10px'}}>
                         <h4>Add New Photo</h4>
                         <input type="file" onChange={e => setImageToUpload(e.target.files[0])} />
                         <button onClick={onUploadImage} disabled={!imageToUpload}>Upload</button>
@@ -171,14 +171,14 @@ export default function ArticlePage(){
             {/* CONTENT SECTION */}
             {isEditing ? (
                 <textarea 
-                    className="edit_textarea"
+                    className="edit-textarea"
                     value={articleText}
                     onChange={e => setArticleText(e.target.value)}
                     rows="15"
                     style={{ width: '100%', marginTop: '20px' }}
                 />
             ) : (
-                articleData.content.map((p, i) => <p key={i} className="article_text">{p}</p>)
+                articleData.content.map((p, i) => <p key={i} className="article-text">{p}</p>)
             )}
 
 
@@ -186,14 +186,14 @@ export default function ArticlePage(){
             {/* Main view - Upvote & Comment */}
             {!isEditing && (
                 <>
-                    <div className="upvote_section">
+                    <div className="upvote-section">
                         <p className="article_text">{upvotes} upvotes</p>
-                        {user && <button className="upvote_button" onClick={onUpvoteClicked}>Upvote</button>}
+                        {user && <button className="upvote-button" onClick={onUpvoteClicked}>Upvote</button>}
                     </div>
 
                     {/*{(articleData.type === 'event' || articleData.location) && (*/}
                     {true && (
-                        <div className="event_signup_container" style={{ border: '1px solid #ddd', padding: '20px', margin: '20px 0' }}>
+                        <div className="event-signup-container" style={{ border: '1px solid #ddd', padding: '20px', margin: '20px 0' }}>
                             <h3>Event Details</h3>
                             <p><strong>Starts:</strong> {articleData.eventDate ? new Date(articleData.eventDate).toLocaleString() : 'TBD'}</p>
                             <p><strong>Location:</strong> {articleData.location}</p>
@@ -202,7 +202,7 @@ export default function ArticlePage(){
                                 <button 
                                     onClick={onSignupClicked}
                                     disabled={articleData.attendees?.includes(user.uid)}
-                                    className="signup_btn"
+                                    className="signup-btn"
                                 >
                                     {articleData.attendees?.includes(user.uid) ? "You're attending" : "Sign Up"}
                                 </button>

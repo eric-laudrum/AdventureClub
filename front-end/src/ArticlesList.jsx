@@ -6,38 +6,59 @@ export default function ArticlesList({ articles, user }){
         return <p>No articles found. Try adding one!</p>;
     }
 
-    return (
-        <div className="article_list">
-            {articles.map(article => (
-                <div key={article._id} className="article_pane">
-                    <div className="article_head"> 
-                        {/* 1. Add the image here */}
-                        {article.primaryImage && (
-                            <img 
-                                className="article_image" 
-                                src={article.primaryImage} 
-                                alt={article.title} 
-                            />
-                        )}
+    const featuredArticles = articles.slice(0, 2);
+    const remainingArticles = articles.slice(2);
 
-                        <div className="article_list_content" style={{ marginLeft: '20px' }}>
-                            <Link to={`/articles/${article.name}`}>
-                                <h3 className="article_title">{article.title}</h3>
-                                
-                                {article.type === 'event' && (
-                                    <div className="event_metadata">
-                                        <p>📍 {article.location}</p>
-                                        <p>📅 {article.eventDate ? new Date(article.eventDate).toLocaleDateString() : 'TBD'}</p>
-                                    </div>
+    return (
+        <div className="main-layout-container">
+            
+            {/* Left Column (Featured) */}
+            <div className="featured-section">
+                {featuredArticles.map(article => (
+                    <div key={article._id} className="article-pane featured-pane">
+                        <Link to={`/articles/${article.name}`} className="article-card-link">
+                            <div className="article-image-container">
+                                {article.primaryImage ? (
+                                    <img className="article-image" src={article.primaryImage} alt={article.title} />
+                                ) : (
+                                    <div className="image-placeholder" /> 
                                 )}
+                            </div>
+                            <div className="article-title-bar">
+                                <h3 className="article-title">{article.title}</h3>
+                            </div>
+                        </Link>
+                    </div>
+                ))}
+            </div>
+
+            {/* Right Side - Scroll */}
+            <div className="scroll-column">
+                {remainingArticles.map(article => (
+                    <div key={article._id} className="list-item-container">
+                        {/* Image */}
+                        <div className="article-pane">
+                            <Link to={`/articles/${article.name}`} className="article-card-link">
+                                <div className="article-image-container">
+                                    <img className="article-image" src={article.primaryImage} alt={article.title} />
+                                </div>
+                                <div className="article-title-bar">
+                                    <h3 className="article-title">{article.title}</h3>
+                                </div>
                             </Link>
-                            <p className="article_text">
-                                {article.content[0].substring(0, 150)}...
-                            </p>
+                        </div>
+
+                      
+                        <div className="article-preview-text">
+                            <p>{article.content[0]}</p>
+                            <Link title="Read more" to={`/articles/${article.name}`} className="text-link">
+                                Read More
+                            </Link>
                         </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
+
         </div>
     );
 };

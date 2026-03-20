@@ -220,10 +220,8 @@ app.post('/api/articles', upload.array('images'), async(req, res) => {
                     metadata: { contentType: file.mimetype },
                 });
 
-                await fileRef.makePublic();
-
-                const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileRef.name}`;
-                imageUrls.push( publicUrl )
+                const publicUrl = await getDownloadURL(fileRef); 
+                imageUrls.push(publicUrl);
             }
         }
     

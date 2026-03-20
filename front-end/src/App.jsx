@@ -63,7 +63,7 @@ const router = createBrowserRouter(routes);
 function App() {
   return (
     <>
-    <div className="main_body">
+    <div className="main-body">
       <RouterProvider router={router} fallbackElement={<div>Loading...</div>} />
 
     </div>

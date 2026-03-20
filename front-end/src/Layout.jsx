@@ -1,17 +1,13 @@
 import { Outlet } from 'react-router-dom';
-import NavBar from './NavBar';
-import Header from './Header'
+import Header from './Header';
 
-export default function Layout(){
+export default function Layout() {
     return (
-        <>
-            
+        <div id="root">
             <Header />
-            <Outlet />
-            
-
-        </>
-        
-   
+            <main style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+                <Outlet />
+            </main>
+        </div>
     );
 }

@@ -13,7 +13,7 @@ export default function Header(){
 
     return(
 
-        <div className="header_section">
+        <div className="header-section">
 
 
             {/* Account Container (in/out) */}

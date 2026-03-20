@@ -17,19 +17,19 @@ export default function NavBar() {
                 </li>
 
                 <li className='nav-link'>
-                    <Link to='/' className='link'>About</Link>
+                    <Link to='/about' className='link'>About</Link>
                 </li>
 
                 <li className='nav-link'>
-                    <Link to='/' className='link'>Articles</Link>
+                    <Link to='/articles' className='link'>Articles</Link>
                 </li>
 
                 <li className='nav-link'>
-                    <Link to='/' className='link'>Events</Link>
+                    <Link to='/events' className='link'>Events</Link>
                 </li>
 
                 <li className='nav-link'>
-                    <Link to='/' className='link'>Contact</Link>
+                    <Link to='/contact' className='link'>Contact</Link>
                 </li>
             </ul>
         </nav>
