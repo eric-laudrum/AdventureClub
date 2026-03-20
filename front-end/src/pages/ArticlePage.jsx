@@ -1,13 +1,13 @@
 import React from 'react';
 import {useState, useEffect } from 'react';
-import { useParams, useLoaderData, useNavigate } from 'react-router-dom';
+import { useParams, useLoaderData, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import CommentsList from '../CommentsList';
 import AddCommentForm from '../AddCommentForm';
 import useUser from "../../hooks/useUser";
 
 
-export default function ArticlePage({article}){
+export default function ArticlePage({}){
     const { name } = useParams();
     const { articleData } = useLoaderData();
     const { user, isAdmin, isLoading } = useUser();
@@ -23,7 +23,7 @@ export default function ArticlePage({article}){
     useEffect(() => {
         setUpvotes(articleData?.upvotes || 0);
         setComments(articleData?.comments || []);
-        setArticleText(articleData?.content?.[0] || "");
+        setArticleText(articleData?.content?.join('\n\n') || "");
     }, [articleData]);
 
     console.log("Current Article Data:", articleData);
@@ -107,7 +107,7 @@ export default function ArticlePage({article}){
 
     async function onDeleteArticle() {
 
-        if (user.uid !== articleData.authorUid && !user.isAdmin) {
+        if (user.uid !== articleData.authorUid && !isAdmin){
             alert("You don't have permission to delete this.");
             return;
         }
@@ -141,17 +141,35 @@ export default function ArticlePage({article}){
         }
     }
 
+    if (isLoading) return <div className="section-container">Loading...</div>;
+    if (!articleData) return <div className="section-container">Article not found.</div>;
+
     return(
         <div className="section-container">
             <div className="article-head">
                 {/* -- Article Title -- */}
-                <h2 className='section-title'>{articleData.title}</h2>
-                
+                {isEditing ? (
+                    <input 
+                        type="text" 
+                        className="edit-title-input"
+                        value={articleData.title}
+                        onChange={(e) => {}}
+                       
+                    />
+                ) : (
+                    <h2 className='section-title'>{articleData.title}</h2>
+                )}
+                            
                 {/* ADMIN CONTROLS */}
                 {isAdmin && (
                     <div className="admin-toolbar">
-                        <button onClick={handleEdit}>Edit Article</button>
-                        <button onClick={handleDelete} style={{color: 'red'}}>Delete</button>
+                        {/* Use Link instead of a button with a function */}
+                        <Link to={`/articles/${name}/edit`} className="edit-link-btn">
+                            Edit Article
+                        </Link>
+                        <button onClick={onDeleteArticle} style={{color: 'red'}}>
+                            Delete Article
+                        </button>
                     </div>
                 )}
             </div>
@@ -187,7 +205,7 @@ export default function ArticlePage({article}){
                     style={{ width: '100%', marginTop: '20px' }}
                 />
             ) : (
-                articleData.content.map((p, i) => <p key={i} className="article-text">{p}</p>)
+                (articleData.content || []).map((p, i) => <p key={i} className="article-text">{p}</p>)
             )}
 
 

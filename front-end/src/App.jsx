@@ -15,6 +15,7 @@ import ProfilePage from './pages/ProfilePage';
 import AddArticleForm from './pages/AddArticleForm';
 import EventsPage from './pages/EventsPage';
 import ContactPage from './pages/ContactPage';
+import EditArticlePage from './pages/EditArticlePage';
 
 const routes = [{
   path: '/',
@@ -38,6 +39,10 @@ const routes = [{
   },{
     path: '/articles/:name',
     element: <ArticlePage />,
+    loader: articleLoader
+  },{
+    path: '/articles/:name/edit',
+    element: <EditArticlePage />,
     loader: articleLoader
   },{
     path: '/login',

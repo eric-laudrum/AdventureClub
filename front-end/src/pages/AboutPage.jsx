@@ -1,4 +1,5 @@
 import React from 'react';
+import vinylImage from '../assets/vinyl-017.jpg';
 
 export default function AboutPage() {
     return (
@@ -11,7 +12,7 @@ export default function AboutPage() {
             <div className="about-content-card">
                 <div className="images-container">
                     <img 
-                        src="/src/assets/LOOPIN_ABOUT.png" 
+                        src={vinylImage}
                         className="article-image" 
                         alt="Loop In Music and Coding" 
                     />

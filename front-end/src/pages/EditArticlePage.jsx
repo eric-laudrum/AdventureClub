@@ -14,7 +14,7 @@ export default function EditArticlePage(){
     
     const [ upvotes, setUpvotes ] = useState(articleData?.upvotes || 0);
     const [ comments, setComments ] = useState(articleData?.comments || []);
-    const [ articleText, setArticleText ] = useState(articleData?.content?.[0] || "");
+    const [ articleText, setArticleText ] = useState(articleData?.content?.join('\n\n') || "");
 
 
     const onCancelClicked = () => {
@@ -26,7 +26,7 @@ export default function EditArticlePage(){
     useEffect(() => {
         setUpvotes(articleData?.upvotes || 0);
         setComments(articleData?.comments || []);
-        setArticleText(articleData?.content?.[0] || "");
+        setArticleText(articleData?.content?.join('\n\n') || "");
     }, [articleData]);
 
     async function onUpvoteClicked() {
@@ -70,13 +70,18 @@ export default function EditArticlePage(){
     async function onSaveClicked() {
         try {
             const token = await user.getIdToken();
-            const response = await axios.put(`/api/articles/${name}`, {
-                articleText: articleText // Matches your backend req.body
+
+            const contentArray = articleText.split('\n').filter(p => p.trim() !== "");
+
+            
+            await axios.put(`/api/articles/${name}`, {
+                articleText: contentArray
             }, {
                 headers: { authtoken: token }
             });
 
             alert("Article saved successfully!");
+            navigate(`/articles/${name}`);
         } catch (err) {
             console.error("Save error:", err);
             alert("Failed to save article.");
@@ -84,28 +89,28 @@ export default function EditArticlePage(){
     }
 
     return (
-        <div className="section_container">
-            <h2 className='section_title'>Editing: {articleData.title}</h2>
+        <div className="section-container">
+            <h2 className='section-title'>Editing: {articleData.title}</h2>
             
             {/* TEXT EDITOR */}
             <textarea
-                className="edit_textarea"
+                className="edit-textarea"
                 value={articleText}
                 onChange={e => setArticleText(e.target.value)}
                 rows="15"
                 style={{ width: '100%', marginBottom: '10px' }}
             />
 
-            <div className="button_group">
-                <button className="save_button" onClick={onSaveClicked}>Save Changes</button>
-                <button className="cancel_button" onClick={onCancelClicked}>Cancel</button>
+            <div className="button-group">
+                <button className="save-button" onClick={onSaveClicked}>Save Changes</button>
+                <button className="cancel-button" onClick={onCancelClicked}>Cancel</button>
             </div>
 
             {/* IMAGE MANAGEMENT */}
-            <div className="image_edit_section">
+            <div className="image-edit-section">
                 {articleData.imageUrls?.map((url, i) => (
-                    <div key={i} className="image_wrapper">
-                        <img src={url} alt="article" className="edit_preview_img" />
+                    <div key={i} className="image-wrapper">
+                        <img src={url} alt="article" className="edit-preview-img" />
                         <button onClick={() => handleDeleteImage(url)}>Delete Image</button>
                     </div>
                 ))}

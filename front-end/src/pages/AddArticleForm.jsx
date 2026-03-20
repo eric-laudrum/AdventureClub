@@ -64,66 +64,85 @@ export default function AddArticleForm({  onArticleUpdated }){
         }
     };
 
-    return(
-        
-        <div className="section-container">
-            <div className="about-content-card">
-                <h3>New Article / Event</h3>
-                
-                <div className="new_article_form">
-                    <label>
-                        <input 
-                            type="checkbox" 
-                            checked={isEvent} 
-                            onChange={(e) => setIsEvent(e.target.checked)} 
-                        /> 
-                        Is this an Event?
-                    </label>
+    if (isLoading || !isAdmin) return null;
 
+    return (
+        <div className="section-container">
+            <div className="about-content-card admin-form-card">
+                <header className="form-header">
+                    <h3>✨ Create New Post</h3>
+                    <div className="toggle-wrapper">
+                        <label className="switch">
+                            <input 
+                                type="checkbox" 
+                                checked={isEvent} 
+                                onChange={(e) => setIsEvent(e.target.checked)} 
+                            />
+                            <span className="slider round"></span>
+                        </label>
+                        <span className="toggle-label">{isEvent ? "Event Mode" : "Standard Article"}</span>
+                    </div>
+                </header>
+
+                <div className="form-body">
                     {isEvent && (
-                        <div className="event-fields">
-                            <input 
-                                type="datetime-local" 
-                                className="article_title_input"
-                                value={eventDate} 
-                                onChange={(e) => setEventDate(e.target.value)} 
-                            />
-                            <input 
-                                type="text" 
-                                className="article_title_input"
-                                placeholder="Location (or link)" 
-                                value={location} 
-                                onChange={(e) => setLocation(e.target.value)} 
-                            />
+                        <div className="event-details-grid">
+                            <div className="input-group">
+                                <label>Event Date & Time</label>
+                                <input 
+                                    type="datetime-local" 
+                                    className="styled-input"
+                                    value={eventDate} 
+                                    onChange={(e) => setEventDate(e.target.value)} 
+                                />
+                            </div>
+                            <div className="input-group">
+                                <label>Location / Link</label>
+                                <input 
+                                    type="text" 
+                                    className="styled-input"
+                                    placeholder="e.g. Community Center or Zoom Link" 
+                                    value={location} 
+                                    onChange={(e) => setLocation(e.target.value)} 
+                                />
+                            </div>
                         </div>
                     )}
 
-                    <label className="input_field">
-                        Title:
-                        <input className="article_title_input" 
+                    <div className="input-group">
+                        <label>Headline</label>
+                        <input 
+                            className="styled-input title-field" 
                             type="text" 
-                            value={ titleText } 
+                            placeholder="Give your post a catchy title..."
+                            value={titleText} 
                             onChange={e => setArticleTitleText(e.target.value)}
                         />
-                    </label>
+                    </div>
 
-                    <label className="input_field">
-                        Text:
+                    <div className="input-group">
+                        <label>Content</label>
                         <textarea
-                            className="article_text_input" 
-                            value={ articleText } 
-                            onChange={ e => setArticleText(e.target.value)}
-                            rows="10"
+                            className="styled-textarea" 
+                            placeholder="Write your story here..."
+                            value={articleText} 
+                            onChange={e => setArticleText(e.target.value)}
+                            rows="8"
                         />
-                    </label>
+                    </div>
 
-                    <label className="input_field">
-                        Image(s):
-                        <input type="file" multiple onChange={ e => setFiles( e.target.files )} />
-                    </label>
+                    <div className="input-group file-group">
+                        <label>Media Uploads</label>
+                        <div className="file-input-wrapper">
+                            <input type="file" multiple onChange={e => setFiles(e.target.files)} id="file-upload" />
+                            <label htmlFor="file-upload" className="file-label">
+                                📁 {files.length > 0 ? `${files.length} files selected` : "Choose Images"}
+                            </label>
+                        </div>
+                    </div>
 
-                    <button className="edit-button" style={{color: 'white', marginTop: '20px'}} onClick={ submitArticle }>
-                        Post to Loop In
+                    <button className="submit-post-btn" onClick={submitArticle}>
+                        Publish to Loop In
                     </button>
                 </div>
             </div>
