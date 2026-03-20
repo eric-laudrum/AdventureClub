@@ -75,6 +75,27 @@ textarea {
   max-width: 100%;
 }
 
+.admin-post-link {
+    background-color: #ff4500; 
+    color: white !important;
+    padding: 5px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.85rem;
+    transition: transform 0.2s;
+}
+
+.admin-post-link:hover {
+    transform: scale(1.05);
+    background-color: #e63e00;
+}
+
+
+
+
+
+
 .account-container {
     position: absolute;
     top: 15px;
@@ -114,6 +135,7 @@ textarea {
 .sign-out-link:hover {
     background: rgba(255, 255, 255, 0.1);
 }
+
 
 
 
@@ -484,13 +506,11 @@ h3.article-title {
 
 .section-container {
     background-color: var(--primary-cream);
-    width: 100%;
+    display: block !important;
+    height: auto !important;  
     min-height: 100vh;
-    margin: 0;
-    padding: 60px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    overflow-y: auto !important; 
+    padding: 20px;
 }
 
 .section-header{

@@ -58,7 +58,12 @@ const routes = [{
   {
     path: '/contact',
     element: <ContactPage />,
-},
+  },
+  { 
+    path: "create-article", 
+    element: <AddArticleForm /> 
+  },
+
   
 ]
 }]

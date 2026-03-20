@@ -20,7 +20,7 @@ export default function LoginPage(){
 
     return(
         
-        <div className="section-container">
+        <div className="section-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <div className="article-head">
                 <h1 className="section-title">Log In</h1>
             </div>

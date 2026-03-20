@@ -2,43 +2,48 @@ import { Link, useNavigate } from "react-router-dom";
 import { getAuth, signOut } from 'firebase/auth';
 import useUser from "../hooks/useUser";
 import NavBar from './NavBar'
-import './App.css'
 
 
 export default function Header(){
 
-    const { isLoading, user } = useUser();
+    const { user, isAdmin, isLoading } = useUser();
     const navigate = useNavigate();
     const accountLink = user ? `/profile/${user.uid}` : '/login';
+    
+    // Debugging
+    console.log("Header Check -> User:", !!user, "Admin:", isAdmin);
 
-    return(
+    const handleSignOut = async () => {
+        try {
+            const auth = getAuth();
+            await signOut(auth);
+           
+            navigate('/'); 
+        } catch (err) {
+            console.error("Sign out error:", err);
+        }
+    };
 
+    return (
         <div className="header-section">
-
-
-            {/* Account Container (in/out) */}
             <div className="account-container">
                 {isLoading ? (
                     <span className="loading-text">...</span>
                 ) : (
                     <div className="account-controls">
+                        
+                        {isAdmin && (
+                            <Link to="/create-article" className="admin-post-link">
+                                + New Post
+                            </Link>
+                        )}
+
                         {user ? (
-                        // Show Sign Out if logged in
-                        <button 
-                            className="sign-out-link" 
-                            onClick={() => {
-                                signOut(getAuth());
-                                navigate('/'); // Clean redirect to home
-                            }}
-                        >
-                            Sign Out
-                        </button>
-                    ) : (
-                        // Show Sign In if logged out
-                        <Link to="/login" className="sign-out-link">
-                            Sign In
-                        </Link>
-                    )}
+                            <button className="sign-out-link" onClick={handleSignOut}>Sign Out</button>
+                        ) : (
+                            <Link to="/login" className="sign-out-link">Sign In</Link>
+                        )}
+        
                         <Link to={accountLink} className="account-icon-link">
                             <svg 
                                 xmlns="http://www.w3.org/2000/svg" 

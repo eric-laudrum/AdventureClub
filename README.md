@@ -79,3 +79,4 @@ cd .. && npm start
     - relevant dates
 - Clean up css redundancies
 - Add video embedding
+- Clean up Profile Page

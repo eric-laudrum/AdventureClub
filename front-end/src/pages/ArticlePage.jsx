@@ -1,3 +1,4 @@
+import React from 'react';
 import {useState, useEffect } from 'react';
 import { useParams, useLoaderData, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -9,7 +10,7 @@ import useUser from "../../hooks/useUser";
 export default function ArticlePage({article}){
     const { name } = useParams();
     const { articleData } = useLoaderData();
-    const { user } = useUser();
+    const { user, isAdmin, isLoading } = useUser();
     const navigate = useNavigate();
 
     const [ upvotes, setUpvotes] = useState(articleData?.upvotes || 0);
@@ -147,19 +148,12 @@ export default function ArticlePage({article}){
                 <h2 className='section-title'>{articleData.title}</h2>
                 
                 {/* ADMIN CONTROLS */}
-                {user && (user.uid === articleData.authorUid || user.isAdmin) && (
-                <div className="admin-controls">
-                    {!isEditing ? (
-                        <button onClick={() => setIsEditing(true)}>Edit Article</button>
-                    ) : (
-                        <>
-                            <button onClick={onSaveClicked} style={{backgroundColor: 'green', color: 'white'}}>Save</button>
-                            <button onClick={() => setIsEditing(false)}>Cancel</button>
-                            <button onClick={onDeleteArticle} style={{backgroundColor: 'red', color: 'white'}}>Delete Article</button>
-                        </>
-                    )}
-                </div>
-            )}
+                {isAdmin && (
+                    <div className="admin-toolbar">
+                        <button onClick={handleEdit}>Edit Article</button>
+                        <button onClick={handleDelete} style={{color: 'red'}}>Delete</button>
+                    </div>
+                )}
             </div>
             
             {/* IMAGE SECTION */}
