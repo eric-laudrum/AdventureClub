@@ -20,9 +20,7 @@ export default function ArticleScroll({ articles }) {
                     
                     <div className="article-preview-text">
                         <p>{article.content[0]}</p>
-                        <Link to={`/articles/${article.name}`} className="text-link">
-                            Read More
-                        </Link>
+                        
                     </div>
                 </div>
             ))}

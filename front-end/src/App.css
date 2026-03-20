@@ -178,10 +178,9 @@ p {
   background-color: var(--primary-cream);
 
   padding: 2.5rem; 
-  gap: 40px;
   
   overflow: hidden;
-  box-sizing: border-box;
+
 }
 
 
@@ -198,9 +197,17 @@ p {
 }
 
 .featured-pane {
-  flex: 1;    
-  min-height: 0;
-  aspect-ratio: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.featured-pane  {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+  object-position: center;
 }
 
 .scroll-column {
@@ -218,9 +225,21 @@ p {
 }
 
 .scroll-column .article-pane {
-  aspect-ratio: 16 / 9; 
-  width: 80%; 
-  margin: 0 auto;
+  width: 100% !important; 
+  aspect-ratio: 16 / 9;
+  margin: 0;
+  border-radius: var(--border-radius);
+}
+
+.scroll-column{
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+}
+
+.scroll-column .list-item-container {
+  width: 100%;
+  margin-bottom: 40px;
 }
 
 .list-item-container {
@@ -228,6 +247,19 @@ p {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
+}
+
+
+.articles-only-page {
+  height: calc(100vh - 20vh - 35px);
+  overflow-y: auto;
+  padding: 40px;
+  background-color: var(--primary-cream);
+}
+
+.articles-only-page .list-item-container {
+  max-width: 900px;
+  margin: 0 auto 40px auto;
 }
 
 .article-preview-text {
@@ -269,6 +301,21 @@ p {
   padding: 20px;
 }
 
+
+.scroll-column .article-image-container,
+.scroll-column {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+}
+
+
+.scroll-column .article-preview-text {
+  width: 100% !important;
+  padding: 20px 0;
+  text-align: left;
+}
+
 .article-pane{
   display: flex;
   background-color: white;
@@ -292,6 +339,16 @@ p {
   flex-direction: column; 
 }
 
+.images-container {
+    width: 100%;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+
 .article-image-container {
   flex: 1;
   min-height: 0;
@@ -302,7 +359,31 @@ p {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
+
+
+.article-page-container {
+    height: 100vh; 
+    overflow-y: auto;
+    background-color: var(--primary-cream);
+    padding: 0; 
+}
+
+.single-article-content {
+  max-width: 800px;
+  margin: 0 auto; 
+}
+
+.article-hero-image {
+  width: 100%;
+  height: auto;
+  max-height: 60vh;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+}
+
 
 feature.article-image {
   width: 100%;
@@ -334,21 +415,65 @@ feature.article-image {
   text-overflow: ellipsis; 
 }
 
+.article-text {
+    font-size: 1.1rem;
+    line-height: 1.8; 
+    margin-bottom: 1.5rem;
+    color: var(--text-dark);
+}
+
 .event-badge {
   font-size: 0.9rem;
 }
 
+.full-width-scroll-page {
+    height: calc(100vh - 20vh - 35px);
+    overflow-y: auto;
+    padding: 2.5rem;
+    background-color: var(--primary-cream);
+}
 
+.article-scroll-container .list-item-container {
+    width: 100%;
+    max-width: 1000px; 
+    margin: 0 auto 50px auto;
+}
 
-
-.section-container{
+.article-scroll-container {
   display: flex;
   flex-direction: column;
+  gap: 40px;
+  width: 100%;
+}
 
-  justify-content: start;
-  align-items: start;
-  text-align: left;
+.article-scroll-container .article-pane {
+    width: 100% !important;
+    aspect-ratio: 16 / 9;
+    margin: 0;
+}
 
+.article-scroll-container .article-image-container,
+.article-scroll-container {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.article-scroll-container .article-preview-text {
+    width: 100% !important;
+    padding: 20px 0;
+}
+
+
+.section-container {
+    display: block;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: visible; 
+    padding: 40px 20px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .section-header{
@@ -392,7 +517,9 @@ feature.article-image {
 
 
 .text-link{
-  color: blue;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 550;
 }
 
 .edit-button{

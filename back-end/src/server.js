@@ -191,8 +191,9 @@ app.post('/api/articles', upload.array('images'), async(req, res) => {
 
     try {
         if (!req.user) {
-            return res.status(401).json({ message: "Unauthorized: No user found" });
+            return res.status(401).json({ message: "Unauthorized" });
         }
+        
 
         // Destructure info from frontend
         const { articleTitle, articleText, type, eventDate, location } = req.body;
@@ -265,23 +266,15 @@ app.post('/api/articles', upload.array('images'), async(req, res) => {
 
 // Upvote article
 app.post('/api/articles/:name/upvote', async (req, res)=>{
-    const{ name } = req.params;
     const { uid } = req.user;
+    if (!uid) return res.status(401).send("Login to vote");
 
     const updatedArticle = await db.collection('articles').findOneAndUpdate(
-        { name },
-        {
-            $inc: { upvotes: 1 },
-            $push: { upvoteIds: uid }, 
-        },
+        { name: req.params.name },
+        { $inc: { upvotes: 1 }, $push: { upvoteIds: uid } },
         { returnDocument: "after" }
     );
-
-    if (updatedArticle) {
-        res.json(updatedArticle);
-    } else {
-        res.status(404).send("Article not found");
-    }
+    res.json(updatedArticle);
 });
 
 // Comment on article

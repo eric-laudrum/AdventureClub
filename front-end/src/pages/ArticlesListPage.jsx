@@ -5,23 +5,19 @@ import { useNavigate } from "react-router-dom";
 import { useLoaderData } from 'react-router-dom';
 import useUser from '../../hooks/useUser';
 
+import ArticleScroll from '../components/ArticleScroll';
+
 export default function ArticlesListPage(){
-    
+
+    const { articles } = useLoaderData();
     const { user } = useUser();
-    const data = useLoaderData();
-    console.log("FRONTEND RECEIVED DATA:", data);
-    
-    const { articles } = data || { articles: [] };
     
     return(
         <>
 
-        <button className="add-button">
-            <Link to="/add-article">+ article</Link>
-        </button>
-
-
-            <ArticlesList articles={ articles } user={ user }/>
+        <div className="articles-only-page">
+            <ArticleScroll articles={articles} />
+        </div>
 
         </>
     );

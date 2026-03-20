@@ -6,7 +6,7 @@ import AddCommentForm from '../AddCommentForm';
 import useUser from "../../hooks/useUser";
 
 
-export default function ArticlePage(){
+export default function ArticlePage({article}){
     const { name } = useParams();
     const { articleData } = useLoaderData();
     const { user } = useUser();
@@ -46,6 +46,21 @@ export default function ArticlePage(){
         const updatedArticleData = response.data;
         setComments(updatedArticleData.comments);
     }
+
+
+    async function handleDeleteImage(url) {
+    const token = await user.getIdToken();
+    try {
+        const response = await axios.delete(`/api/articles/${name}/images`, {
+            headers: { authtoken: token },
+            data: { imageUrl: url }
+        });
+        // Refresh to show image has been deleted
+        window.location.reload();
+    } catch (err) {
+        alert("Error deleting image");
+    }
+}
 
     async function onUploadImage(){
         if( !imageToUpload ) return;
