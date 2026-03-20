@@ -12,34 +12,57 @@ export default function LoginPage(){
     async function logIn(){
         try{
             await signInWithEmailAndPassword(getAuth(), email, password);
-            navigate('/articles');
+            navigate('/');
         } catch(e){
             setError(e.message);
         }
     }
 
     return(
-        <>
-        <h1>Log In</h1>
+        
+        <div className="section-container">
+            <div className="article-head">
+                <h1 className="section-title">Log In</h1>
+            </div>
 
-        {/* Error handling */}
-        { error && <p>{error}</p>}
+            <div className="new-article-form">
+                {error && <p>{error}</p>}
 
+                <div className="input-field">
+                    <label>Email Address</label>
+                    <input 
+                        className="article-title-input"
+                        placeholder="your@email.com"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)} 
+                    />
+                </div>
 
-        <input 
-            placeholder="Email Address"
-            value={ email }
-            onChange={e => setEmail(e.target.value)} 
-        />
-        <input 
-            placeholder="Password"
-            type="password"
-            value={ password }
-            onChange={e => setPassword(e.target.value)} 
-        />
-        <button onClick={ logIn }>Log In</button>
-        <Link to='/create-account'>Don't have an account? Create one here!</Link>
+                <div className="input-field">
+                    <label>Password</label>
+                    <input 
+                        className="article-title-input"
+                        placeholder="••••••••"
+                        type="password"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)} 
+                    />
+                </div>
 
-        </>
+                <button 
+                    className="edit-button" 
+
+                    onClick={logIn}
+                >
+                    Log In
+                </button>
+
+                <div>
+                    <Link to='/create-account' className="text-link">
+                        Don't have an account? Create one here!
+                    </Link>
+                </div>
+            </div>
+        </div>
     );
 }

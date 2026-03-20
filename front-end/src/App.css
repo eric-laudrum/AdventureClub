@@ -145,11 +145,13 @@ textarea {
 
 
 .link{
-  color: white;
+  color: var(--primary-cream);
 }
 
 .link:hover{
-  font-weight: bold;
+  font-weight: 501;
+
+
 }
 
 
@@ -413,13 +415,14 @@ feature.article-image {
   min-height: 60px;
 }
 
-.article-title {
-  color: var(--primary-light);
+h3.article-title {
+
   margin: 0;
   font-size: 1.1rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis; 
+  color: var(--primary-cream);
 }
 
 .article-text {
@@ -598,16 +601,6 @@ feature.article-image {
 }
 
 
-.article-title-input{
-  height: 2em;
-  width: 30%;
-  min-width: 20em;
-  border-radius: 8px;
-  padding: 2em;
-  background-color: rgb(221, 221, 221);
-  color: black;
-}
-
 
 
 .add-button{
@@ -625,9 +618,17 @@ feature.article-image {
 }
 
 .new-article-form{
-  border: 2px solid none;
-  display: flex;
-  flex-direction: column;
+  background-color: var(--primary-cream);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.new-article-form .article-title-input {
+    width: 100%;
+    min-width: 0;
+    margin-top: 5px;
 }
 
 .input-field{
@@ -654,8 +655,8 @@ feature.article-image {
 /* Contact */
 .input-field label {
     font-weight: bold;
-    margin-bottom: 5px;
-    color: var(--text-dark);
+    color: var(--primary);
+    font-size: 0.9rem;
 }
 
 

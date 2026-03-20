@@ -22,14 +22,23 @@ export default function Header(){
                     <span className="loading-text">...</span>
                 ) : (
                     <div className="account-controls">
-                        {user && (
-                            <button 
-                                className="sign-out-link" 
-                                onClick={() => signOut(getAuth())}
-                            >
-                                Sign Out
-                            </button>
-                        )}
+                        {user ? (
+                        // Show Sign Out if logged in
+                        <button 
+                            className="sign-out-link" 
+                            onClick={() => {
+                                signOut(getAuth());
+                                navigate('/'); // Clean redirect to home
+                            }}
+                        >
+                            Sign Out
+                        </button>
+                    ) : (
+                        // Show Sign In if logged out
+                        <Link to="/login" className="sign-out-link">
+                            Sign In
+                        </Link>
+                    )}
                         <Link to={accountLink} className="account-icon-link">
                             <svg 
                                 xmlns="http://www.w3.org/2000/svg" 

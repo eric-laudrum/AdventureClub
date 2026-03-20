@@ -69,3 +69,13 @@ To run the app as a single unit (Express serving the static build):
 
 ### Start the server
 cd .. && npm start
+
+
+
+# TODO:
+- Set up emailing with Formspree.io
+- Set up events page to show calendar:
+    - when posts are made
+    - relevant dates
+- Clean up css redundancies
+- Add video embedding
