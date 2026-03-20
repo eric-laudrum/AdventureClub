@@ -510,9 +510,17 @@ feature.article-image {
 
 }
 
-.sub-title{
-  margin: 20px 0 0 0;
-  color: rgb(40, 40, 40);
+.sub-title {
+    color: var(--primary);
+    font-size: 1.4rem;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-cream);
+    display: inline-block;
+}
+
+.article-body strong {
+    color: var(--primary-light);
 }
 
 
