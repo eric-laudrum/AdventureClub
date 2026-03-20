@@ -107,12 +107,19 @@ export default function ArticlePage({}){
 
     async function onDeleteArticle() {
 
-        if (user.uid !== articleData.authorUid && !isAdmin){
+        const isAuthor = user && articleData && user.uid === articleData.authorUid;
+
+        if (!isAdmin && !isAuthor) {
+            alert("Permission Denied: You are not the author or an admin.");
+            return;
+        }
+
+        if (user.uid !== articleData.authorUid && !isAdmin) {
             alert("You don't have permission to delete this.");
             return;
         }
 
-        const confirmDelete = window.confirm("PERMANENTLY delete this entire article?");
+        const confirmDelete = window.confirm("PERMANENTLY delete this article?");
         if (!confirmDelete) return;
 
         const token = await user.getIdToken();
