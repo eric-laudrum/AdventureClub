@@ -14,6 +14,7 @@ import Header from './Header'
 import ProfilePage from './pages/ProfilePage';
 import AddArticleForm from './pages/AddArticleForm';
 import EventsPage from './pages/EventsPage';
+import ContactPage from './pages/ContactPage';
 
 const routes = [{
   path: '/',
@@ -53,7 +54,11 @@ const routes = [{
   }, {
     path: '/events',
     element: <EventsPage />
-  }
+  },
+  {
+    path: '/contact',
+    element: <ContactPage />,
+},
   
 ]
 }]

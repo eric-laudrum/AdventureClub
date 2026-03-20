@@ -41,6 +41,13 @@ a {
   text-decoration: none;
 }
 
+textarea {
+    background-color: rgb(221, 221, 221);
+    font-family: inherit;
+    border: none;
+    outline: none;
+}
+
 
 
 /* /\/\/\/\/\/\/\/\ Header /\/\/\/\/\/\/\/\ */
@@ -643,6 +650,13 @@ feature.article-image {
   
 }
 
+
+/* Contact */
+.input-field label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: var(--text-dark);
+}
 
 
 

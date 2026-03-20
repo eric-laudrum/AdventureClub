@@ -4,6 +4,7 @@ import { getAuth, signOut} from 'firebase/auth';
 import useUser from "../hooks/useUser";
 import './App.css'
 
+
 export default function NavBar() {
     const navigate = useNavigate();
 
